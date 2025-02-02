@@ -13,12 +13,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PagoEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigo;
+
     private String metodo;
+
     private String estado;
+
     private int cantidadPagos;
     @OneToMany(mappedBy = "pago")
     private List<DetallePagoEntity> detallePagos;
+
 }

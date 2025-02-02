@@ -26,12 +26,17 @@ public class ConsultaEntity {
     @ManyToOne
     @JoinColumn(name = "medico_id")
     private MedicoEntity medico;
+
     @OneToOne
     @JoinColumn(name = "servicio_medico_id", referencedColumnName = "codigo")
     private ServicioMedico servicioMedico;
+
     private LocalDate fecha;
+
     private LocalTime hora;
+
     private String estado;
+
     @OneToOne
     @JoinColumn(name = "codigo_pago", referencedColumnName = "codigo")
     private PagoEntity pago;

@@ -15,10 +15,12 @@ import java.util.List;
 @Getter
 @Setter
 public class PaqueteServiciosEntity extends ServicioMedico{
+
     @ManyToMany
     @JoinTable(name = "servicios_del_paquete",
             joinColumns = @JoinColumn(name = "paquete_id"),
             inverseJoinColumns = @JoinColumn(name = "servicio_individual_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"paquete_id", "servicio_individual_id"}))
     private List<ServicioIndividualEntity> servicios;
+
 }

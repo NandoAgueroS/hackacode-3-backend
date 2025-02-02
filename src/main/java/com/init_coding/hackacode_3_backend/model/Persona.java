@@ -11,18 +11,25 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @MappedSuperclass
-public class Persona {
+public abstract class Persona {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
+
     private String apellido;
+
     private String dni;
+
     private LocalDate fechaNac;
+
     private String email;
+
     private String telefono;
+
     private String direccion;
+
 }

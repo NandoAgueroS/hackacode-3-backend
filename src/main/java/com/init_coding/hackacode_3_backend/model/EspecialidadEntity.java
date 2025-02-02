@@ -5,12 +5,16 @@ import lombok.*;
 
 @Entity
 @Table(name = "especialidad")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
+@Builder
 public class EspecialidadEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
+
 }

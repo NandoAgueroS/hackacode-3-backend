@@ -4,16 +4,22 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
 public abstract class ServicioMedico {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigo;
+
     private BigDecimal precio;
+
     private String nombre;
+
     @Column(name = "tipo_servicio")
+
     private String tipoServicio;
 
     @PrePersist
@@ -22,4 +28,5 @@ public abstract class ServicioMedico {
         if (this instanceof ServicioIndividualEntity) tipoServicio = "INDIVIDUAL";
         else if (this instanceof PaqueteServiciosEntity) tipoServicio = "PAQUETE";
     }
+
 }

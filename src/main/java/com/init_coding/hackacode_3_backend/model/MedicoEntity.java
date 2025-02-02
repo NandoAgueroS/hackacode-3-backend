@@ -1,10 +1,7 @@
 package com.init_coding.hackacode_3_backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class MedicoEntity extends Persona{
+
     @ManyToMany
     @JoinTable(
             name = "medico_especialidad",
@@ -24,12 +23,14 @@ public class MedicoEntity extends Persona{
     )
     private List<EspecialidadEntity> especialidades;
 
+
     @OneToMany(mappedBy = "medico")
     private List<ConsultaEntity> consultas;
 
     private BigDecimal sueldo;
 
-    @OneToOne
-    @JoinColumn(name = "disponibilidad_id", referencedColumnName = "id")
-    private DisponibilidadMedicoEntity disponibilidad;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "medico_id", referencedColumnName = "id")
+    private List<DisponibilidadMedicoEntity> disponibilidades;
+
 }

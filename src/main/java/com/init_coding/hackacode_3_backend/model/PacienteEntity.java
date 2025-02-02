@@ -11,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Getter @Setter
 public class PacienteEntity extends Persona{
+
     @Column(name = "tiene_obra_social")
     private boolean tieneObraSocial;
+
 }
