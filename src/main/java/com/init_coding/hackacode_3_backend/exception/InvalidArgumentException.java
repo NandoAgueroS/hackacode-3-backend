@@ -1,0 +1,9 @@
+package com.init_coding.hackacode_3_backend.exception;
+
+public class InvalidArgumentException extends Exception{
+
+    public InvalidArgumentException(String message) {
+        super(message);
+    }
+
+}
