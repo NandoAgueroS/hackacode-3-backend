@@ -33,6 +33,18 @@ public class RestResponseEntityExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
+
+    @ExceptionHandler(InvalidServicioException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorMessageResponse> invalidServicioExceptionHandler(InvalidServicioException exception){
+        ErrorMessageResponse message = ErrorMessageResponse.builder()
+                .message(exception.getMessage())
+                .error("Servicio inválido")
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
     @ExceptionHandler(InvalidArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessageResponse> invalidArgumentExceptionHanlder(InvalidArgumentException exception){
