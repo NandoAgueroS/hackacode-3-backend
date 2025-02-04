@@ -14,8 +14,6 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class DisponibilidadMedicoRequest {
 
-    private Long id;
-
     private String cubreTurno;
 
     @Schema(type = "String", pattern = "HH:mm:SS")

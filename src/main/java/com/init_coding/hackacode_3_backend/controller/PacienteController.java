@@ -62,7 +62,7 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del paciente a crear",
                     required = true)
-            @RequestBody PacienteRequest paciente) throws InvalidEspecialidadException{
+            @RequestBody PacienteRequest paciente) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pacienteService.create(paciente));
     }
 
@@ -80,7 +80,7 @@ public class PacienteController {
             @PathVariable(name = "pacienteId") Long pacienteId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del paciente a modificar",
                     required = true)
-            @RequestBody PacienteRequest paciente) throws InvalidEspecialidadException, ResourceNotFoundException{
+            @RequestBody PacienteRequest paciente) throws ResourceNotFoundException{
         return ResponseEntity.status(HttpStatus.OK).body(pacienteService.update(pacienteId, paciente));
     }
 
