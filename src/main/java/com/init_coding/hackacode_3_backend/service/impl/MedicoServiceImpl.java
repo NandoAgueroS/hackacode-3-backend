@@ -7,6 +7,7 @@ import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadExceptio
 import com.init_coding.hackacode_3_backend.mapper.MedicoMapper;
 import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
 import com.init_coding.hackacode_3_backend.model.MedicoEntity;
+import com.init_coding.hackacode_3_backend.model.MedicoEspecialidadEntity;
 import com.init_coding.hackacode_3_backend.repository.IEspecialidadRepository;
 import com.init_coding.hackacode_3_backend.repository.IMedicoRepository;
 import com.init_coding.hackacode_3_backend.service.IEspecialidadService;
@@ -46,13 +47,16 @@ public class MedicoServiceImpl implements IMedicoService {
 
     @Override
     public MedicoResponse create(MedicoRequest medico) throws InvalidEspecialidadException {
-        List<EspecialidadEntity> especialidades = especialidadService.verificarEspecialidades(medico.getEspecialidadesIDs());
+        List<EspecialidadEntity> especialidades = especialidadService.verificarEspecialidades(
+                medico.getEspecialidades().stream()
+                        .map(medicoEspecialidad -> medicoEspecialidad.getEspecialidad())
+                        .toList());
 
         MedicoEntity medicoEntity = medicoMapper.toEntity(medico);
-        medicoEntity.setEspecialidades(especialidades);
+        //medicoEntity.setEspecialidades(especialidades);
         medicoRepository.save(medicoEntity);
 
-        return medicoMapper.toResponse(medicoEntity);
+        return medicoMapper.toResponse(medicoRepository.findById(medicoEntity.getId()).orElse(null));
     }
 
     @Override
@@ -61,14 +65,19 @@ public class MedicoServiceImpl implements IMedicoService {
         MedicoEntity medicoEntity = medicoRepository.findById(medicoId).orElseThrow(()->
                 new ResourceNotFoundException("modificar", "Medico", medicoId));
 
+        List<EspecialidadEntity> especialidades = especialidadService.verificarEspecialidades(
+                medico.getEspecialidades().stream()
+                        .map(medicoEspecialidad -> medicoEspecialidad.getEspecialidad())
+                        .toList());
+
         MedicoEntity medicoModificado = medicoMapper.toEntity(medico);
-        medicoModificado.setEspecialidades(especialidadService.verificarEspecialidades(medico.getEspecialidadesIDs()));
+
+        //medicoModificado.setEspecialidades(especialidadService.verificarEspecialidades(ids));
         medicoModificado.setId(medicoId);
-        medicoModificado.setDisponibilidades(medicoMapper.toDisponibilidadMedicoEntityList(medico.getDisponibilidades()));
 
         medicoRepository.save(medicoModificado);
 
-        return medicoMapper.toResponse(medicoModificado);
+        return medicoMapper.toResponse(medicoRepository.findById(medicoModificado.getId()).orElse(null));
     }
 
     @Override

@@ -15,22 +15,12 @@ import java.util.List;
 @ToString
 public class MedicoEntity extends Persona{
 
-    @ManyToMany
-    @JoinTable(
-            name = "medico_especialidad",
-            joinColumns = @JoinColumn(name = "medico_id"),
-            inverseJoinColumns = @JoinColumn(name = "especialidad_id")
-    )
-    private List<EspecialidadEntity> especialidades;
-
-
     @OneToMany(mappedBy = "medico")
     private List<ConsultaEntity> consultas;
 
     private BigDecimal sueldo;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "medico_id", referencedColumnName = "id")
-    private List<DisponibilidadMedicoEntity> disponibilidades;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "medico")
+    private List<MedicoEspecialidadEntity> especialidades;
 
 }

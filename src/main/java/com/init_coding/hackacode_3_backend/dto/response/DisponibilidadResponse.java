@@ -1,7 +1,6 @@
 package com.init_coding.hackacode_3_backend.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,9 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DisponibilidadMedicoResponse {
+public class DisponibilidadResponse {
 
-    private Long id;
+    //private Long id;
 
     private String cubreTurno;
 

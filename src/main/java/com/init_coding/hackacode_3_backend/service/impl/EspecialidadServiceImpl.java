@@ -12,6 +12,7 @@ import com.init_coding.hackacode_3_backend.service.IEspecialidadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -65,11 +66,15 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
 
     @Override
     public List<EspecialidadEntity> verificarEspecialidades(List<Long> especialidadesIDs) throws InvalidEspecialidadException {
+        especialidadesIDs = new ArrayList<>(especialidadesIDs);
         if (especialidadesIDs == null || especialidadesIDs.isEmpty()) {
             throw new InvalidEspecialidadException("No se ingresó ninguna especialidad");
         }
 
         List<EspecialidadEntity> especialidadesRequest = especialidadRepository.findAllById(especialidadesIDs);
+        if (especialidadesRequest.isEmpty()){
+            throw new InvalidEspecialidadException(especialidadesIDs);
+        }
 
         if (especialidadesRequest.size() != especialidadesIDs.size()){
             List<Long> idsEncontrados = especialidadesRequest.stream().map(EspecialidadEntity::getId).toList();

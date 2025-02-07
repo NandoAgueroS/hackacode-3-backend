@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -14,7 +13,7 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DisponibilidadMedicoEntity {
+public class DisponibilidadEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +30,9 @@ public class DisponibilidadMedicoEntity {
 
     @Column(name = "dia_semana")
     private DayOfWeek diaSemana;
+
+    @ManyToOne
+    @JoinColumn(name = "medico_especialidad_id", referencedColumnName = "id")
+    private MedicoEspecialidadEntity medicoEspecialidad;
 
 }

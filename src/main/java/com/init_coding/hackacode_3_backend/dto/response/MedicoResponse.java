@@ -1,7 +1,6 @@
 package com.init_coding.hackacode_3_backend.dto.response;
 
-import com.init_coding.hackacode_3_backend.model.ConsultaEntity;
-import com.init_coding.hackacode_3_backend.model.DisponibilidadMedicoEntity;
+import com.init_coding.hackacode_3_backend.model.MedicoEspecialidadEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 public class MedicoResponse extends PersonaResponse{
 
-    private List<EspecialidadResponse> especialidades;
+    //private List<EspecialidadResponse> especialidades;
 
     private BigDecimal sueldo;
 
-    private List<DisponibilidadMedicoResponse> disponibilidades;
+    private List<MedicoEspecialidadResponse> especialidades;
 
 }
