@@ -93,4 +93,8 @@ public class MedicoServiceImpl implements IMedicoService {
         medicoRepository.deleteById(medicoId);
     }
 
+    @Override
+    public boolean isValid(Long medicoId){
+        return medicoRepository.existsById(medicoId);
+    }
 }

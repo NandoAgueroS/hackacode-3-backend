@@ -24,10 +24,10 @@ public interface ServicioIndividualMapper {
 
     List<ServicioIndividualResponse> toResponseList(List<ServicioIndividualEntity> servicio);
 
-    @Mapping(target = "codigo", source = "id")
-    ServicioIndividualEntity idToEntity(Long id);
+    @Mapping(target = "codigo", source = "servicioCodigo")
+    ServicioIndividualEntity idToEntity(Long servicioCodigo);
 
-    List<ServicioIndividualEntity> idsToEntityList(List<Long> ids);
+    List<ServicioIndividualEntity> idsToEntityList(List<Long> serviciosCodigos);
 
 
 }

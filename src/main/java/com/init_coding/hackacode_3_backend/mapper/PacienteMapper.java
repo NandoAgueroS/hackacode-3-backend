@@ -4,6 +4,7 @@ import com.init_coding.hackacode_3_backend.dto.request.PacienteRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PacienteResponse;
 import com.init_coding.hackacode_3_backend.model.PacienteEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public interface PacienteMapper {
     PacienteEntity toEntity(PacienteResponse paciente);
 
     PacienteEntity toEntity(PacienteRequest paciente);
+
+    @Mapping(target = "id", source = "pacienteId")
+    PacienteEntity toEntity(Long pacienteId);
 
     List<PacienteResponse> toResponseList(List<PacienteEntity> pacientes);
 

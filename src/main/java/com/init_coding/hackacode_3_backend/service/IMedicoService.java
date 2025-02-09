@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 
@@ -57,4 +58,12 @@ public interface IMedicoService {
      * @throws ResourceNotFoundException si el medico no existe.
      */
     void delete(Long medicoId)throws ResourceNotFoundException;
+
+    /**
+     * Verifica si el medico es válido.
+     *
+     * @param medicoId ID del médico.
+     * @return boolean indicando si el médico existe o no.
+     */
+    boolean isValid(Long medicoId);
 }

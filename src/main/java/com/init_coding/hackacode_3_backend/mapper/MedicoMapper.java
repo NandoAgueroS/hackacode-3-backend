@@ -25,8 +25,8 @@ public interface MedicoMapper {
     //@Mapping(target = "especialidades", source = "especialidadesIDs")
     MedicoEntity toEntity(MedicoRequest medico);
 
-    @Mapping(target = "id")
-    MedicoEntity toEntity(Long id);
+    @Mapping(target = "id", source = "medicoId")
+    MedicoEntity toEntity(Long medicoId);
 
     MedicoEntity toEntity(MedicoResponse medico);
 

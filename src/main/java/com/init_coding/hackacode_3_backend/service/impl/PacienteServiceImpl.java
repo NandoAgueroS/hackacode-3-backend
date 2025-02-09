@@ -66,4 +66,9 @@ public class PacienteServiceImpl implements IPacienteService {
 
         pacienteRepository.deleteById(pacienteId);
     }
+
+    @Override
+    public boolean isValid(Long pacienteId){
+        return pacienteRepository.existsById(pacienteId);
+    }
 }

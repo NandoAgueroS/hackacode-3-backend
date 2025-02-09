@@ -27,7 +27,7 @@ public class ConsultaEntity {
     @JoinColumn(name = "medico_id")
     private MedicoEntity medico;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "servicio_medico_id", referencedColumnName = "codigo")
     private ServicioMedico servicioMedico;
 

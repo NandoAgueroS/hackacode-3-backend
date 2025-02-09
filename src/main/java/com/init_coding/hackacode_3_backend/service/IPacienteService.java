@@ -47,5 +47,13 @@ public interface IPacienteService {
      * @throws ResourceNotFoundException si el paciente no existe.
      */
     void delete(Long pacienteId)throws ResourceNotFoundException;
-    
+
+    /**
+     * Verifica si el paciente es válido.
+     *
+     * @param pacienteId ID del paciente.
+     * @return boolean indicando si el paciente existe o no.
+     */
+    boolean isValid(Long pacienteId);
+
 }
