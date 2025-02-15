@@ -8,6 +8,6 @@ import java.util.List;
 @Repository
 public interface IMedicoRepository extends JpaRepository<MedicoEntity, Long> {
 
-    List<MedicoEntity> findAllByEspecialidadesId(Long especialidadId);
+    List<MedicoEntity> findAllByEspecialidadId(Long especialidadId);
 
 }

@@ -19,7 +19,10 @@ public class MedicoEntity extends Persona{
 
     private BigDecimal sueldo;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "medico")
-    private List<MedicoEspecialidadEntity> especialidades;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<DisponibilidadEntity> disponibilidades;
+
+    @ManyToOne
+    private EspecialidadEntity especialidad;
 
 }

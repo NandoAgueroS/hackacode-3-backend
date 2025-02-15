@@ -11,6 +11,8 @@ public class MedicoRequest extends PersonaRequest{
 
     private BigDecimal sueldo;
 
-    private List<MedicoEspecialidadRequest> especialidades;
+    private List<DisponibilidadRequest> disponibilidades;
+
+    private Long especialidadId;
 
 }

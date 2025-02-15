@@ -30,7 +30,7 @@ public interface IMedicoService {
      *
      * @return {@link MedicoResponse} con la información del médico creado.
      * @param medico Datos del médico a guardar.
-     * @throws com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException si alguna de las especialidades no existe.
+     * @throws com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException si la especialidad no existe.
      */
     MedicoResponse create(MedicoRequest medico) throws InvalidEspecialidadException;
 
@@ -39,6 +39,7 @@ public interface IMedicoService {
      *
      * @return {@link MedicoResponse} con la información de los médicos.
      * @throws ResourceNotFoundException si el medico no existe.
+     * @throws com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException si la especialidad no existe.
      */
     MedicoResponse update(Long medicoId, MedicoRequest medico)throws ResourceNotFoundException, InvalidEspecialidadException;
 

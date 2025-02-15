@@ -7,7 +7,6 @@ import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadExceptio
 import com.init_coding.hackacode_3_backend.mapper.MedicoMapper;
 import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
 import com.init_coding.hackacode_3_backend.model.MedicoEntity;
-import com.init_coding.hackacode_3_backend.model.MedicoEspecialidadEntity;
 import com.init_coding.hackacode_3_backend.repository.IEspecialidadRepository;
 import com.init_coding.hackacode_3_backend.repository.IMedicoRepository;
 import com.init_coding.hackacode_3_backend.service.IEspecialidadService;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MedicoServiceImpl implements IMedicoService {
@@ -42,15 +40,13 @@ public class MedicoServiceImpl implements IMedicoService {
     public List<MedicoResponse> findByEspecialidad(Long especialidadId) throws InvalidEspecialidadException {
         especialidadService.verificarEspecialidades(especialidadId);
 
-        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidadesId(especialidadId));
+        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidadId(especialidadId));
     }
 
     @Override
     public MedicoResponse create(MedicoRequest medico) throws InvalidEspecialidadException {
-        List<EspecialidadEntity> especialidades = especialidadService.verificarEspecialidades(
-                medico.getEspecialidades().stream()
-                        .map(medicoEspecialidad -> medicoEspecialidad.getEspecialidad())
-                        .toList());
+        EspecialidadEntity especialidad = especialidadService.verificarEspecialidades(
+                medico.getEspecialidadId());
 
         MedicoEntity medicoEntity = medicoMapper.toEntity(medico);
         //medicoEntity.setEspecialidades(especialidades);
@@ -65,10 +61,8 @@ public class MedicoServiceImpl implements IMedicoService {
         MedicoEntity medicoEntity = medicoRepository.findById(medicoId).orElseThrow(()->
                 new ResourceNotFoundException("modificar", "Medico", medicoId));
 
-        List<EspecialidadEntity> especialidades = especialidadService.verificarEspecialidades(
-                medico.getEspecialidades().stream()
-                        .map(medicoEspecialidad -> medicoEspecialidad.getEspecialidad())
-                        .toList());
+        EspecialidadEntity especialidad = especialidadService.verificarEspecialidades(
+                medico.getEspecialidadId());
 
         MedicoEntity medicoModificado = medicoMapper.toEntity(medico);
 

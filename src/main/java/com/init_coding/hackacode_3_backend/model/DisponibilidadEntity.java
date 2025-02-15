@@ -31,8 +31,4 @@ public class DisponibilidadEntity {
     @Column(name = "dia_semana")
     private DayOfWeek diaSemana;
 
-    @ManyToOne
-    @JoinColumn(name = "medico_especialidad_id", referencedColumnName = "id")
-    private MedicoEspecialidadEntity medicoEspecialidad;
-
 }
