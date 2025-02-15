@@ -9,11 +9,27 @@ import java.util.List;
 public interface IConsultaService {
 
     /**
-     * Obtiene todas las consultas registrados.
+     * Obtiene todas las consultas registradas.
      *
      * @return Lista de {@link ConsultaResponse} con la información de las consultas.
      */
     List<ConsultaResponse> findAll();
+
+    /**
+     * Obtiene todas las consultas registradas de un paciente.
+     *
+     * @return Lista de {@link ConsultaResponse} con la información de las consultas.
+     * @throws InvalidArgumentException si el paciente indicado no existe.
+     */
+    List<ConsultaResponse> findAllByPaciente(Long pacienteId) throws InvalidArgumentException;
+
+    /**
+     * Obtiene todas las consultas registradas de un médico.
+     *
+     * @return Lista de {@link ConsultaResponse} con la información de las consultas.
+     * @throws InvalidArgumentException si el médico indicado no existe.
+     */
+    List<ConsultaResponse> findAllByMedico(Long medicoId) throws InvalidArgumentException;
 
     /**
      * Crea una consulta.

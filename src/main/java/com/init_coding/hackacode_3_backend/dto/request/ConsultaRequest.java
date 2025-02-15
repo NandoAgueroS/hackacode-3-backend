@@ -1,5 +1,6 @@
 package com.init_coding.hackacode_3_backend.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ConsultaRequest {
 
     private LocalDate fecha;
 
+    @Schema(type = "String", pattern = "HH:mm:SS")
     private LocalTime hora;
 
     private String estado;

@@ -102,6 +102,24 @@ public class ConsultaServiceImpl implements IConsultaService {
     }
 
     @Override
+    public List<ConsultaResponse> findAllByPaciente(Long pacienteId) throws InvalidArgumentException {
+        if (!pacienteService.isValid(pacienteId)) throw new InvalidArgumentException("paciente", pacienteId, true);
+
+        return consultaMapper.toResponseList(
+                consultaRepository.findAllByPaciente_id(pacienteId)
+        );
+    }
+
+    @Override
+    public List<ConsultaResponse> findAllByMedico(Long medicoId) throws InvalidArgumentException {
+        if (!medicoService.isValid(medicoId)) throw new InvalidArgumentException("médico", medicoId, true);
+
+        return consultaMapper.toResponseList(
+                consultaRepository.findAllByMedico_id(medicoId)
+        );
+    }
+
+    @Override
     public void verificarArgumentos(ConsultaRequest consultaRequest) throws InvalidArgumentException{
         Long medicoId = consultaRequest.getMedicoId();
 
