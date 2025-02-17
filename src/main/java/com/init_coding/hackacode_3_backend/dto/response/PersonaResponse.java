@@ -21,4 +21,6 @@ public abstract class PersonaResponse {
     private String telefono;
 
     private String direccion;
+
+    private boolean activo;
 }

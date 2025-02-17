@@ -1,13 +1,10 @@
 package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.EspecialidadRequest;
-import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.EspecialidadResponse;
-import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
-import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IEspecialidadService;
-import com.init_coding.hackacode_3_backend.service.IMedicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,6 +33,16 @@ public class EspecialidadController {
     @GetMapping
     public ResponseEntity<List<EspecialidadResponse>> getAll(){
         return ResponseEntity.ok(especialidadService.findAll());
+    }
+
+    @Operation(summary = "Obtiene todas las especialidades inactivas",
+            description = "Este endpoint permite obtener los detalles de todas las especialidades inactivas")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de especialidades inactivas")
+    )
+    @GetMapping("/inactivos")
+    public ResponseEntity<List<EspecialidadResponse>> getAllInactivas(){
+        return ResponseEntity.ok(especialidadService.findAllInactivas());
     }
 
     @Operation(summary = "Obtiene una especialidad por su ID",
@@ -87,7 +94,7 @@ public class EspecialidadController {
     }
 
     @Operation(summary = "Elimina una especialidad",
-            description = "Este endpoint permite eliminar una especialidad existente")
+            description = "Este endpoint permite eliminar una especialidad existente de manera lógica")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Se eliminó la especialidad"),
@@ -96,10 +103,27 @@ public class EspecialidadController {
     )
     @DeleteMapping("/{especialidadId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public void desactivar(
             @Parameter(description = "ID de la especialidad")
-            @PathVariable(name = "especialidadId") Long especialidadId) throws ResourceNotFoundException{
-        especialidadService.delete(especialidadId);
+            @PathVariable(name = "especialidadId") Long especialidadId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        especialidadService.updateActivo(especialidadId, false);
     }
-    
+
+    @Operation(summary = "Reactiva una especialidad",
+            description = "Este endpoint permite reactivar una especialidad eliminada de manera lógica")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Se reactivó la especialidad"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró la especialidad"),
+                    @ApiResponse(responseCode = "409", description = "Conflicto o la especialidad ya se encontraba activa")
+            }
+    )
+    @PatchMapping("/{especialidadId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivar(
+            @Parameter(description = "ID de la especialidad")
+            @PathVariable(name = "especialidadId") Long especialidadId) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        especialidadService.updateActivo(especialidadId, true);
+    }
+
 }

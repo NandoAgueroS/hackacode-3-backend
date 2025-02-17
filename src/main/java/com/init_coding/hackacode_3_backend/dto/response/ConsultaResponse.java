@@ -26,4 +26,6 @@ public class ConsultaResponse {
 
     private String estado;
 
+    private boolean activo;
+
 }

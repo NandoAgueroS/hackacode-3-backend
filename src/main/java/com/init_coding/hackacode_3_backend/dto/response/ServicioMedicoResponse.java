@@ -15,4 +15,6 @@ public class ServicioMedicoResponse {
 
     private String tipoServicio;
 
+    private boolean activo;
+
 }

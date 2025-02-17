@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class EspecialidadResponse {
+
     private Long id;
+
     private String nombre;
+
+    private boolean activo;
 }

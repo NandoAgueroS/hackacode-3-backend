@@ -2,7 +2,7 @@ package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.PacienteRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PacienteResponse;
-import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IPacienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +33,16 @@ public class PacienteController {
     @GetMapping
     public ResponseEntity<List<PacienteResponse>> getAll(){
         return ResponseEntity.ok(pacienteService.findAll());
+    }
+
+    @Operation(summary = "Obtiene todos los pacientes inactivos",
+            description = "Este endpoint permite obtener los detalles de todos los pacientes inactivos")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de pacientes inactivos")
+    )
+    @GetMapping("/inactivos")
+    public ResponseEntity<List<PacienteResponse>> getAllInactivos(){
+        return ResponseEntity.ok(pacienteService.findAllInactivos());
     }
 
 
@@ -85,7 +95,7 @@ public class PacienteController {
     }
 
     @Operation(summary = "Elimina un paciente",
-            description = "Este endpoint permite eliminar un paciente existente")
+            description = "Este endpoint permite eliminar un paciente existente de manera lógica")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Se eliminó el paciente"),
@@ -94,10 +104,27 @@ public class PacienteController {
     )
     @DeleteMapping("/{pacienteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public void desactivar(
             @Parameter(description = "ID del paciente")
-            @PathVariable(name = "pacienteId") Long pacienteId) throws ResourceNotFoundException{
-        pacienteService.delete(pacienteId);
+            @PathVariable(name = "pacienteId") Long pacienteId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        pacienteService.updateActivo(pacienteId, false);
+    }
+
+    @Operation(summary = "Reactiva un paciente",
+            description = "Este endpoint permite reactivar un paciente eliminado de manera lógica")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Se reactivó el paciente"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró el paciente"),
+                    @ApiResponse(responseCode = "409", description = "Conflicto o el paciente ya se encontraba activo")
+            }
+    )
+    @PatchMapping("/{pacienteId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivar(
+            @Parameter(description = "ID del paciente")
+            @PathVariable(name = "pacienteId") Long pacienteId) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        pacienteService.updateActivo(pacienteId, true);
     }
     
 }

@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.PaqueteServiciosRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PaqueteServiciosResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidServicioException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.model.ServicioIndividualEntity;
@@ -17,6 +18,13 @@ public interface IPaqueteServiciosService {
      * @return Lista de {@link PaqueteServiciosResponse} con la información de los paquetes de servicios.
      */
     List<PaqueteServiciosResponse> findAll();
+
+    /**
+     * Obtiene todos los paquetes de servicios inactivos.
+     *
+     * @return Lista de {@link PaqueteServiciosResponse} con la información de los paquetes de servicios.
+     */
+    List<PaqueteServiciosResponse> findAllInactivos();
 
     /**
      * Crea un paquete de servicios.
@@ -49,12 +57,14 @@ public interface IPaqueteServiciosService {
     PaqueteServiciosResponse findById(Long paqueteServiciosId)throws ResourceNotFoundException;
 
     /**
-     * Elimina un paquete de servicios por su ID.
+     * Permite activar o desactivar un paquete de servicios por su ID.
      *
      * @param paqueteServiciosId ID del paquete de servicios.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si el paquete de servicios no existe.
+     * @throws EntityAlreadyActivaException si el paquete de servicios ya se encuentra activo.
      */
-    void delete(Long paqueteServiciosId)throws ResourceNotFoundException;
+    void updateActivo(Long paqueteServiciosId, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
 
     /**

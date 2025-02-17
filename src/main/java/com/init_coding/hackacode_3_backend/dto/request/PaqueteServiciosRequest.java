@@ -1,6 +1,5 @@
 package com.init_coding.hackacode_3_backend.dto.request;
 
-import com.init_coding.hackacode_3_backend.model.ServicioIndividualEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

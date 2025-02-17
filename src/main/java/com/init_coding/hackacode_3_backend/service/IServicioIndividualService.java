@@ -2,10 +2,9 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.ServicioIndividualRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ServicioIndividualResponse;
-import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidServicioException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
-import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
 import com.init_coding.hackacode_3_backend.model.ServicioIndividualEntity;
 
 import java.util.List;
@@ -18,6 +17,13 @@ public interface IServicioIndividualService {
      * @return Lista de {@link ServicioIndividualResponse} con la información de los servicios individuales.
      */
     List<ServicioIndividualResponse> findAll();
+
+    /**
+     * Obtiene todos los servicios individuales inactivos.
+     *
+     * @return Lista de {@link ServicioIndividualResponse} con la información de los servicios individuales.
+     */
+    List<ServicioIndividualResponse> findAllInactivos();
 
     /**
      * Crea un servicio individual.
@@ -47,12 +53,14 @@ public interface IServicioIndividualService {
     ServicioIndividualResponse findById(Long servicioIndividualId)throws ResourceNotFoundException;
 
     /**
-     * Elimina un servicio individual por su ID.
+     * Permite activar o desactivar un servicio individual por su ID.
      *
      * @param servicioIndividualId ID del servicio individual.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si el servicio individual no existe.
+     * @throws EntityAlreadyActivaException si el servicio individual ya se encuentra activo.
      */
-    void delete(Long servicioIndividualId)throws ResourceNotFoundException;
+    void updateActivo(Long servicioIndividualId, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
     /**
      * Verifica que existan los servicios individuales ingresados.

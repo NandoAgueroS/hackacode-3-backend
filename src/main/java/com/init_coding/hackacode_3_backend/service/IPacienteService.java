@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.PacienteRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PacienteResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 
 import java.util.List;
@@ -14,6 +15,13 @@ public interface IPacienteService {
      * @return Lista de {@link PacienteResponse} con la información de los pacientes.
      */
     List<PacienteResponse> findAll();
+
+    /**
+     * Obtiene todos los pacientes inactivos.
+     *
+     * @return Lista de {@link PacienteResponse} con la información de los pacientes.
+     */
+    List<PacienteResponse> findAllInactivos();
 
     /**
      * Crea un paciente.
@@ -41,12 +49,14 @@ public interface IPacienteService {
     PacienteResponse findById(Long pacienteId)throws ResourceNotFoundException;
 
     /**
-     * Elimina un paciente por su ID.
+     * Permite activar o desactivar un paciente por su ID.
      *
      * @param pacienteId ID del paciente.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si el paciente no existe.
+     * @throws EntityAlreadyActivaException si el paciente ya se encuentra activo.
      */
-    void delete(Long pacienteId)throws ResourceNotFoundException;
+    void updateActivo(Long pacienteId, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
     /**
      * Verifica si el paciente es válido.

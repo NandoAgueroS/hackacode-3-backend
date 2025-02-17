@@ -1,9 +1,6 @@
 package com.init_coding.hackacode_3_backend.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,4 +29,6 @@ public abstract class Persona {
 
     private String direccion;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean activo = true;
 }

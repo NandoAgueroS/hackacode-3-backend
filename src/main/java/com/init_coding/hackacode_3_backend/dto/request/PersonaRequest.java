@@ -1,8 +1,6 @@
 package com.init_coding.hackacode_3_backend.dto.request;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 

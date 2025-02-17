@@ -5,10 +5,9 @@ import lombok.*;
 
 @Entity
 @Table(name = "especialidad")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Builder
 public class EspecialidadEntity {
 
     @Id
@@ -16,5 +15,8 @@ public class EspecialidadEntity {
     private Long id;
 
     private String nombre;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean activo = true;
 
 }

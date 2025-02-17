@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IMedicoService;
@@ -32,6 +33,16 @@ public class MedicoController {
     @GetMapping
     public ResponseEntity<List<MedicoResponse>> getAll(){
         return ResponseEntity.ok(medicoService.findAll());
+    }
+
+    @Operation(summary = "Obtiene todos los medicos inactivos",
+    description = "Este endpoint permite obtener los detalles de todos los médicos inactivos")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de médicos inactivos")
+    )
+    @GetMapping("/inactivos")
+    public ResponseEntity<List<MedicoResponse>> getAllInactivos(){
+        return ResponseEntity.ok(medicoService.findAllInactivos());
     }
 
     @Operation(summary = "Obtiene los medicos que tengan la especialidad indicada",
@@ -99,7 +110,7 @@ public class MedicoController {
     }
 
     @Operation(summary = "Elimina un médico",
-    description = "Este endpoint permite eliminar un médico existente")
+    description = "Este endpoint permite eliminar un médico existente de manera lógica")
     @ApiResponses(
             value = {
             @ApiResponse(responseCode = "204", description = "Se eliminó el médico"),
@@ -108,9 +119,26 @@ public class MedicoController {
     )
     @DeleteMapping("/{medicoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public void desactivar(
             @Parameter(description = "ID del médico")
-            @PathVariable(name = "medicoId") Long medicoId) throws ResourceNotFoundException{
-        medicoService.delete(medicoId);
+            @PathVariable(name = "medicoId") Long medicoId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        medicoService.updateActivo(medicoId, false);
+    }
+
+    @Operation(summary = "Reactiva un médico",
+    description = "Este endpoint permite reactivar un médico eliminado de manera lógica")
+    @ApiResponses(
+            value = {
+            @ApiResponse(responseCode = "200", description = "Se reactivó el médico"),
+            @ApiResponse(responseCode = "404", description = "No se encontró el médico"),
+            @ApiResponse(responseCode = "409", description = "Conflicto o el médico ya se encontraba activo")
+            }
+    )
+    @PatchMapping("/{medicoId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivar(
+            @Parameter(description = "ID del médico")
+            @PathVariable(name = "medicoId") Long medicoId) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        medicoService.updateActivo(medicoId, true);
     }
 }

@@ -1,9 +1,8 @@
 package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.EspecialidadRequest;
-import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.EspecialidadResponse;
-import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
@@ -18,6 +17,13 @@ public interface IEspecialidadService {
      * @return Lista de {@link com.init_coding.hackacode_3_backend.dto.response.EspecialidadResponse} con la información de las especialidades.
      */
     List<EspecialidadResponse> findAll();
+
+    /**
+     * Obtiene todos las especialidades inactivas.
+     *
+     * @return Lista de {@link com.init_coding.hackacode_3_backend.dto.response.EspecialidadResponse} con la información de las especialidades.
+     */
+    List<EspecialidadResponse> findAllInactivas();
 
     /**
      * Crea una especialidad.
@@ -47,12 +53,14 @@ public interface IEspecialidadService {
     EspecialidadResponse findById(Long especialidadId)throws ResourceNotFoundException;
 
     /**
-     * Elimina una especialidad por su ID.
+     * Permite activar o desactivar una especialidad por su ID.
      *
      * @param especialidadId ID de la especialidad.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si la especialidad no existe.
+     * @throws EntityAlreadyActivaException si la especialidad ya se encuentra activa.
      */
-    void delete(Long especialidadId)throws ResourceNotFoundException;
+    void updateActivo(Long especialidadId, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
     /**
      * Verifica que existan las especialidades ingresadas.

@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
@@ -10,11 +11,18 @@ import java.util.List;
 
 public interface IMedicoService {
     /**
-     * Obtiene todos los médicos registrados.
+     * Obtiene todos los médicos activos.
      *
      * @return Lista de {@link MedicoResponse} con la información de los médicos.
      */
     List<MedicoResponse> findAll();
+
+    /**
+     * Obtiene todos los médicos inactivos.
+     *
+     * @return Lista de {@link MedicoResponse} con la información de los médicos.
+     */
+    List<MedicoResponse> findAllInactivos();
 
     /**
      * Obtiene todos los médicos registrados con la especialidad indicada.
@@ -37,7 +45,7 @@ public interface IMedicoService {
     /**
      * Actualiza los datos de un médico existente.
      *
-     * @return {@link MedicoResponse} con la información de los médicos.
+     * @return {@link MedicoResponse} con la información del médico.
      * @throws ResourceNotFoundException si el medico no existe.
      * @throws com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException si la especialidad no existe.
      */
@@ -53,12 +61,14 @@ public interface IMedicoService {
     MedicoResponse findById(Long medicoId)throws ResourceNotFoundException;
 
     /**
-     * Elimina un médico por su ID.
+     * Permite activar o desactivar un médico por su ID.
      *
      * @param medicoId ID del médico.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si el medico no existe.
+     * @throws EntityAlreadyActivaException si el medico ya se encuentra activo.
      */
-    void delete(Long medicoId)throws ResourceNotFoundException;
+    void updateActivo(Long medicoId, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
     /**
      * Verifica si el medico es válido.

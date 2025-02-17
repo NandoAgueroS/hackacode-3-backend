@@ -4,6 +4,7 @@ import com.init_coding.hackacode_3_backend.dto.request.PaqueteServiciosRequest;
 import com.init_coding.hackacode_3_backend.dto.request.ServicioIndividualRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PaqueteServiciosResponse;
 import com.init_coding.hackacode_3_backend.dto.response.ServicioIndividualResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidServicioException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IPaqueteServiciosService;
@@ -39,6 +40,16 @@ public class ServicioMedicoController {
     @GetMapping("/individuales")
     public ResponseEntity<List<ServicioIndividualResponse>> getAllServiciosIndividuales(){
         return ResponseEntity.ok(servicioIndividualService.findAll());
+    }
+
+    @Operation(summary = "Obtiene todas los servicios individuales inactivos",
+            description = "Este endpoint permite obtener los detalles de todos los servicios individuales inactivos")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de servicios individuales inactivos")
+    )
+    @GetMapping("/individuales/inactivos")
+    public ResponseEntity<List<ServicioIndividualResponse>> getAllServiciosIndividualesInactivos(){
+        return ResponseEntity.ok(servicioIndividualService.findAllInactivos());
     }
 
     @Operation(summary = "Obtiene un servicio individual por su ID",
@@ -89,8 +100,9 @@ public class ServicioMedicoController {
         return ResponseEntity.status(HttpStatus.OK).body(servicioIndividualService.update(servicioIndividualId, servicioIndividual));
     }
 
+
     @Operation(summary = "Elimina un servicio individual",
-            description = "Este endpoint permite eliminar un servicio individual existente")
+            description = "Este endpoint permite eliminar un servicio individual existente de manera lógica")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Se eliminó el servicio individual"),
@@ -99,10 +111,27 @@ public class ServicioMedicoController {
     )
     @DeleteMapping("/individuales/{servicioIndividualId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteServicioIndividuale(
+    public void desactivarServicioIndividual(
             @Parameter(description = "ID del servicio individual")
-            @PathVariable(name = "servicioIndividualId") Long servicioIndividualId) throws ResourceNotFoundException{
-        servicioIndividualService.delete(servicioIndividualId);
+            @PathVariable(name = "servicioIndividualId") Long servicioIndividualId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        servicioIndividualService.updateActivo(servicioIndividualId, false);
+    }
+
+    @Operation(summary = "Reactiva un servicio individual",
+            description = "Este endpoint permite reactivar un servicio individual eliminado de manera lógica")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204", description = "Se reactivó el servicio individual"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró el servicio individual"),
+                    @ApiResponse(responseCode = "409", description = "Conflicto o el servicio individual ya se encontraba activo")
+            }
+    )
+    @PatchMapping("/individuales/{servicioIndividualId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivarServicioIndividual(
+            @Parameter(description = "ID del servicio individual")
+            @PathVariable(name = "servicioIndividualId") Long servicioIndividualId) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        servicioIndividualService.updateActivo(servicioIndividualId, true);
     }
 
     @Operation(summary = "Obtiene todos los paquetes de servicios registrados",
@@ -113,6 +142,16 @@ public class ServicioMedicoController {
     @GetMapping("/paquetes")
     public ResponseEntity<List<PaqueteServiciosResponse>> getAllPaquetesServicios(){
         return ResponseEntity.ok(paqueteServiciosService.findAll());
+    }
+
+    @Operation(summary = "Obtiene todos los paquetes de servicios inactivos",
+            description = "Este endpoint permite obtener los detalles de todos los paquetes de servicios inactivos")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de paquetes de servicios inactivos")
+    )
+    @GetMapping("/paquetes/inactivos")
+    public ResponseEntity<List<PaqueteServiciosResponse>> getAllPaquetesServiciosInactivos(){
+        return ResponseEntity.ok(paqueteServiciosService.findAllInactivos());
     }
 
 
@@ -167,7 +206,7 @@ public class ServicioMedicoController {
     }
 
     @Operation(summary = "Elimina un paquete de servicios",
-            description = "Este endpoint permite eliminar un paquete de servicios existente")
+            description = "Este endpoint permite eliminar un paquete de servicios existente de manera lógica")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Se eliminó el paquete de servicios"),
@@ -176,10 +215,26 @@ public class ServicioMedicoController {
     )
     @DeleteMapping("/paquetes/{paqueteServiciosId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePaqueteServicios(
+    public void desactivarPaqueteServicios(
             @Parameter(description = "ID del paquete de servicios")
-            @PathVariable(name = "paqueteServiciosId") Long paqueteServiciosId) throws ResourceNotFoundException{
-        paqueteServiciosService.delete(paqueteServiciosId);
+            @PathVariable(name = "paqueteServiciosId") Long paqueteServiciosId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        paqueteServiciosService.updateActivo(paqueteServiciosId, false);
+    }
+    @Operation(summary = "Reactiva un paquete de servicios",
+            description = "Este endpoint permite reactivar un paquete de servicios eliminado de manera lógica")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204", description = "Se eliminó el paquete de servicios"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró el paquete de servicios"),
+                    @ApiResponse(responseCode = "409", description = "Conflicto o el paquete de servicios ya se encontraba activo")
+            }
+    )
+    @PatchMapping("/paquetes/{paqueteServiciosId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivarPaqueteServicios(
+            @Parameter(description = "ID del paquete de servicios")
+            @PathVariable(name = "paqueteServiciosId") Long paqueteServiciosId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        paqueteServiciosService.updateActivo(paqueteServiciosId, true);
     }
     
 }

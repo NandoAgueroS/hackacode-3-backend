@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IConsultaService;
@@ -54,6 +55,16 @@ public class ConsultaController {
             @Parameter(description = "ID del médico")
             @PathVariable(name = "medicoId") Long medicoId) throws InvalidArgumentException{
         return ResponseEntity.ok(consultaService.findAllByMedico(medicoId));
+    }
+
+    @Operation(summary = "Obtiene todas las consultas inactivas",
+            description = "Este endpoint permite obtener los detalles de todas las consultas inactivas")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas inactivas")
+    )
+    @GetMapping("/inactivos")
+    public ResponseEntity<List<ConsultaResponse>> getAllInactivas(){
+        return ResponseEntity.ok(consultaService.findAllInactivas());
     }
 
     @Operation(summary = "Obtiene todas las consultas",
@@ -117,7 +128,7 @@ public class ConsultaController {
     }
 
     @Operation(summary = "Elimina una consulta",
-            description = "Este endpoint permite eliminar una consulta existente")
+            description = "Este endpoint permite eliminar una consulta existente de manera lógica")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Se eliminó la consulta"),
@@ -126,10 +137,27 @@ public class ConsultaController {
     )
     @DeleteMapping("/{consultaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public void desactivar(
             @Parameter(description = "ID de la consulta")
-            @PathVariable(name = "consultaId") Long consultaId) throws ResourceNotFoundException{
-        consultaService.delete(consultaId);
+            @PathVariable(name = "consultaId") Long consultaId) throws ResourceNotFoundException, EntityAlreadyActivaException{
+        consultaService.updateActivo(consultaId, false);
+    }
+
+    @Operation(summary = "Reactiva una consulta",
+            description = "Este endpoint permite reactivar una consulta eliminada de manera lógica")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Se reactivó la consulta"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró la consulta"),
+                    @ApiResponse(responseCode = "409", description = "Conflicto o la consulta ya se encontraba activa")
+            }
+    )
+    @PatchMapping("/{consultaId}/reactivar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reactivar(
+            @Parameter(description = "ID de la consulta")
+            @PathVariable(name = "consultaId") Long consultaId) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        consultaService.updateActivo(consultaId, true);
     }
 
 

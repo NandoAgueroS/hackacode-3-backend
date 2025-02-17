@@ -2,17 +2,20 @@ package com.init_coding.hackacode_3_backend.service.impl;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 import com.init_coding.hackacode_3_backend.mapper.MedicoMapper;
 import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
 import com.init_coding.hackacode_3_backend.model.MedicoEntity;
+import com.init_coding.hackacode_3_backend.model.PaqueteServiciosEntity;
 import com.init_coding.hackacode_3_backend.repository.IEspecialidadRepository;
 import com.init_coding.hackacode_3_backend.repository.IMedicoRepository;
 import com.init_coding.hackacode_3_backend.service.IEspecialidadService;
 import com.init_coding.hackacode_3_backend.service.IMedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,7 +35,13 @@ public class MedicoServiceImpl implements IMedicoService {
 
     @Override
     public List<MedicoResponse> findAll() {
-        List<MedicoResponse> medicoResponses = medicoMapper.toResponseList(medicoRepository.findAll());
+        List<MedicoResponse> medicoResponses = medicoMapper.toResponseList(medicoRepository.findAllByActivoTrue());
+        return medicoResponses;
+    }
+
+    @Override
+    public List<MedicoResponse> findAllInactivos() {
+        List<MedicoResponse> medicoResponses = medicoMapper.toResponseList(medicoRepository.findAllByActivoFalse());
         return medicoResponses;
     }
 
@@ -40,7 +49,7 @@ public class MedicoServiceImpl implements IMedicoService {
     public List<MedicoResponse> findByEspecialidad(Long especialidadId) throws InvalidEspecialidadException {
         especialidadService.verificarEspecialidades(especialidadId);
 
-        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidadId(especialidadId));
+        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidadIdAndActivoTrue(especialidadId));
     }
 
     @Override
@@ -58,7 +67,7 @@ public class MedicoServiceImpl implements IMedicoService {
     @Override
     public MedicoResponse update(Long medicoId, MedicoRequest medico)
             throws ResourceNotFoundException, InvalidEspecialidadException {
-        MedicoEntity medicoEntity = medicoRepository.findById(medicoId).orElseThrow(()->
+        MedicoEntity medicoEntity = medicoRepository.findByIdAndActivoTrue(medicoId).orElseThrow(()->
                 new ResourceNotFoundException("modificar", "Medico", medicoId));
 
         EspecialidadEntity especialidad = especialidadService.verificarEspecialidades(
@@ -71,24 +80,31 @@ public class MedicoServiceImpl implements IMedicoService {
 
         medicoRepository.save(medicoModificado);
 
-        return medicoMapper.toResponse(medicoRepository.findById(medicoModificado.getId()).orElse(null));
+        return medicoMapper.toResponse(medicoRepository.findByIdAndActivoTrue(medicoModificado.getId()).orElse(null));
     }
 
     @Override
     public MedicoResponse findById(Long medicoId) throws ResourceNotFoundException {
-        return medicoMapper.toResponse(medicoRepository.findById(medicoId).orElseThrow(()->
+        return medicoMapper.toResponse(medicoRepository.findByIdAndActivoTrue(medicoId).orElseThrow(()->
                 new ResourceNotFoundException("buscar", "Médico", medicoId)));
     }
 
+    @Transactional
     @Override
-    public void delete(Long medicoId) throws ResourceNotFoundException {
-        medicoRepository.findById(medicoId).orElseThrow(()->
-                new ResourceNotFoundException("eliminar", "Médico", medicoId));
-        medicoRepository.deleteById(medicoId);
+    public void updateActivo(Long medicoId, boolean esActivo) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        if (!esActivo) {
+            if (!medicoRepository.existsByIdAndActivoTrue(medicoId))
+                throw new ResourceNotFoundException("eliminar", "Médico", medicoId);
+        }else{
+            MedicoEntity medico = medicoRepository.findById(medicoId).orElseThrow(() ->
+                    new ResourceNotFoundException("reactivar", "Médico", medicoId));
+            if (medico.isActivo()) throw new EntityAlreadyActivaException("Médico", medicoId);
+        }
+        medicoRepository.updateActivoById(medicoId, esActivo);
     }
 
     @Override
     public boolean isValid(Long medicoId){
-        return medicoRepository.existsById(medicoId);
+        return medicoRepository.existsByIdAndActivoTrue(medicoId);
     }
 }

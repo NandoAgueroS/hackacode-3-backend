@@ -2,7 +2,6 @@ package com.init_coding.hackacode_3_backend.mapper;
 
 import com.init_coding.hackacode_3_backend.dto.request.PaqueteServiciosRequest;
 import com.init_coding.hackacode_3_backend.dto.response.PaqueteServiciosResponse;
-import com.init_coding.hackacode_3_backend.model.PacienteEntity;
 import com.init_coding.hackacode_3_backend.model.PaqueteServiciosEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import java.util.List;
@@ -14,6 +15,13 @@ public interface IConsultaService {
      * @return Lista de {@link ConsultaResponse} con la información de las consultas.
      */
     List<ConsultaResponse> findAll();
+
+    /**
+     * Obtiene todas las consultas activas.
+     *
+     * @return Lista de {@link ConsultaResponse} con la información de las consultas.
+     */
+    List<ConsultaResponse> findAllInactivas();
 
     /**
      * Obtiene todas las consultas registradas de un paciente.
@@ -62,12 +70,14 @@ public interface IConsultaService {
     ConsultaResponse findById(Long consultaCodigo)throws ResourceNotFoundException;
 
     /**
-     * Elimina una consulta por su ID.
+     * Permite activar o desactivar una consulta por su ID.
      *
      * @param consultaCodigo ID de la consulta.
+     * @param esActivo Valor actualizado para la propiedad activo.
      * @throws ResourceNotFoundException si la consulta no existe.
+     * @throws EntityAlreadyActivaException si la consulta ya se encuentra activa.
      */
-    void delete(Long consultaCodigo)throws ResourceNotFoundException;
+    void updateActivo(Long consultaCodigo, boolean esActivo)throws ResourceNotFoundException, EntityAlreadyActivaException;
 
     /**
      * Verifica si el medicoId, pacienteId y servicioMedicoCodigo son válidos.

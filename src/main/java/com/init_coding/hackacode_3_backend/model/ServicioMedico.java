@@ -19,8 +19,10 @@ public abstract class ServicioMedico {
     private String nombre;
 
     @Column(name = "tipo_servicio")
-
     private String tipoServicio;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean activo = true;
 
     @PrePersist
     @PreUpdate

@@ -57,4 +57,16 @@ public class RestResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
+    @ExceptionHandler(EntityAlreadyActivaException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorMessageResponse> entityAlreadyActivaExceptionHanlder(EntityAlreadyActivaException exception){
+        ErrorMessageResponse message = ErrorMessageResponse.builder()
+                .message(exception.getMessage())
+                .error("La entidad ya se encontraba activa")
+                .status(HttpStatus.CONFLICT)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
+    }
+
 }

@@ -2,16 +2,16 @@ package com.init_coding.hackacode_3_backend.service.impl;
 
 import com.init_coding.hackacode_3_backend.dto.request.ServicioIndividualRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ServicioIndividualResponse;
-import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidServicioException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.mapper.ServicioIndividualMapper;
-import com.init_coding.hackacode_3_backend.model.EspecialidadEntity;
 import com.init_coding.hackacode_3_backend.model.ServicioIndividualEntity;
 import com.init_coding.hackacode_3_backend.repository.IServicioIndividualRepository;
 import com.init_coding.hackacode_3_backend.service.IServicioIndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,7 +26,14 @@ public class ServicioIndividualServiceImpl implements IServicioIndividualService
     @Override
     public List<ServicioIndividualResponse> findAll() {
         return servicioIndividualMapper.toResponseList(
-                servicioIndividualRepository.findAll()
+                servicioIndividualRepository.findAllByActivoTrue()
+        );
+    }
+
+    @Override
+    public List<ServicioIndividualResponse> findAllInactivos() {
+        return servicioIndividualMapper.toResponseList(
+                servicioIndividualRepository.findAllByActivoFalse()
         );
     }
 
@@ -41,7 +48,7 @@ public class ServicioIndividualServiceImpl implements IServicioIndividualService
 
     @Override
     public ServicioIndividualResponse update(Long servicioIndividualId, ServicioIndividualRequest servicioIndividual) throws ResourceNotFoundException {
-        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findById(servicioIndividualId).orElseThrow(()->
+        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findByCodigoAndActivoTrue(servicioIndividualId).orElseThrow(()->
                 new ResourceNotFoundException("modificar", "ServicioIndividual", servicioIndividualId));
 
         ServicioIndividualEntity servicioIndividualModificado = servicioIndividualMapper.toEntity(servicioIndividual);
@@ -54,18 +61,25 @@ public class ServicioIndividualServiceImpl implements IServicioIndividualService
 
     @Override
     public ServicioIndividualResponse findById(Long servicioIndividualId) throws ResourceNotFoundException {
-        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findById(servicioIndividualId).orElseThrow(()->
+        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findByCodigoAndActivoTrue(servicioIndividualId).orElseThrow(()->
                 new ResourceNotFoundException("buscar", "ServicioIndividual", servicioIndividualId));
         return servicioIndividualMapper.toResponse(
                 servicioIndividualExistente
         );
     }
 
+    @Transactional
     @Override
-    public void delete(Long servicioIndividualId) throws ResourceNotFoundException {
-        servicioIndividualRepository.findById(servicioIndividualId).orElseThrow(()->
-                new ResourceNotFoundException("eliminar", "ServicioIndividual", servicioIndividualId));
-        servicioIndividualRepository.deleteById(servicioIndividualId);
+    public void updateActivo(Long servicioIndividualId, boolean esActivo) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        if (!esActivo) {
+            if (!servicioIndividualRepository.existsByCodigoAndActivoTrue(servicioIndividualId))
+                throw new ResourceNotFoundException("eliminar", "ServicioIndividual", servicioIndividualId);
+        }else{
+            ServicioIndividualEntity servicioIndividual = servicioIndividualRepository.findById(servicioIndividualId).orElseThrow(() ->
+                    new ResourceNotFoundException("reactivar", "ServicioIndividual", servicioIndividualId));
+            if (servicioIndividual.isActivo()) throw new EntityAlreadyActivaException("ServicioIndividual", servicioIndividualId);
+        }
+        servicioIndividualRepository.updateActivoById(servicioIndividualId, esActivo);
     }
 
     @Override
@@ -74,7 +88,7 @@ public class ServicioIndividualServiceImpl implements IServicioIndividualService
             throw new InvalidServicioException("No se ingresó ninguna especialidad");
         }
 
-        List<ServicioIndividualEntity> serviciosIndividualesExistentes = servicioIndividualRepository.findAllById(serviciosIndividualesIDs);
+        List<ServicioIndividualEntity> serviciosIndividualesExistentes = servicioIndividualRepository.findAllByCodigoInAndActivoTrue(serviciosIndividualesIDs);
 
         if (serviciosIndividualesExistentes.size() != serviciosIndividualesIDs.size()){
             List<Long> idsEncontrados = serviciosIndividualesExistentes.stream().map(ServicioIndividualEntity::getCodigo).toList();
@@ -87,7 +101,7 @@ public class ServicioIndividualServiceImpl implements IServicioIndividualService
 
     @Override
     public ServicioIndividualEntity verificarServicioIndividual(Long servicioIndividualId) throws InvalidServicioException {
-        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findById(servicioIndividualId).orElseThrow(()->
+        ServicioIndividualEntity servicioIndividualExistente = servicioIndividualRepository.findByCodigoAndActivoTrue(servicioIndividualId).orElseThrow(()->
                 new InvalidServicioException(servicioIndividualId));
 
         return servicioIndividualExistente;

@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service.impl;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.mapper.ConsultaMapper;
@@ -43,7 +44,14 @@ public class ConsultaServiceImpl implements IConsultaService {
     @Override
     public List<ConsultaResponse> findAll() {
         return consultaMapper.toResponseList(
-                consultaRepository.findAll()
+                consultaRepository.findAllByActivoTrue()
+        );
+    }
+
+    @Override
+    public List<ConsultaResponse> findAllInactivas() {
+        return consultaMapper.toResponseList(
+                consultaRepository.findAllByActivoFalse()
         );
     }
 
@@ -67,7 +75,7 @@ public class ConsultaServiceImpl implements IConsultaService {
 
     @Override
     public ConsultaResponse update(Long consultaCodigo, ConsultaRequest consulta) throws ResourceNotFoundException, InvalidArgumentException {
-        if (!consultaRepository.existsById(consultaCodigo))
+        if (!consultaRepository.existsByCodigoAndActivoTrue(consultaCodigo))
             throw new ResourceNotFoundException("modificar", "Consulta", consultaCodigo);
 
         verificarArgumentos(consulta);
@@ -87,18 +95,25 @@ public class ConsultaServiceImpl implements IConsultaService {
 
     @Override
     public ConsultaResponse findById(Long consultaCodigo) throws ResourceNotFoundException {return consultaMapper.toResponse(
-                consultaRepository.findById(consultaCodigo).orElseThrow(() ->
+                consultaRepository.findByCodigoAndActivoTrue(consultaCodigo).orElseThrow(() ->
                         new ResourceNotFoundException("buscar", "Consulta", consultaCodigo)
                 )
         );
     }
 
+    @Transactional
     @Override
-    public void delete(Long consultaCodigo) throws ResourceNotFoundException {
-        if (!consultaRepository.existsById(consultaCodigo))
-            throw new ResourceNotFoundException("eliminar", "Consulta", consultaCodigo);
+    public void updateActivo(Long consultaCodigo, boolean esActivo) throws ResourceNotFoundException, EntityAlreadyActivaException {
+        if (!esActivo) {
+            if (!consultaRepository.existsByCodigoAndActivoTrue(consultaCodigo))
+                    throw new ResourceNotFoundException("eliminar", "Consulta", consultaCodigo);
+        }else{
+            ConsultaEntity consulta = consultaRepository.findById(consultaCodigo).orElseThrow(() ->
+                    new ResourceNotFoundException("reactivar", "Consulta", consultaCodigo));
+            if (consulta.isActivo()) throw new EntityAlreadyActivaException("Consulta", consultaCodigo);
+        }
 
-        consultaRepository.deleteById(consultaCodigo);
+        consultaRepository.updateActivoById(consultaCodigo, esActivo);
     }
 
     @Override
@@ -106,7 +121,7 @@ public class ConsultaServiceImpl implements IConsultaService {
         if (!pacienteService.isValid(pacienteId)) throw new InvalidArgumentException("paciente", pacienteId, true);
 
         return consultaMapper.toResponseList(
-                consultaRepository.findAllByPaciente_id(pacienteId)
+                consultaRepository.findAllByPaciente_idAndActivoTrue(pacienteId)
         );
     }
 
@@ -115,7 +130,7 @@ public class ConsultaServiceImpl implements IConsultaService {
         if (!medicoService.isValid(medicoId)) throw new InvalidArgumentException("médico", medicoId, true);
 
         return consultaMapper.toResponseList(
-                consultaRepository.findAllByMedico_id(medicoId)
+                consultaRepository.findAllByMedico_idAndActivoTrue(medicoId)
         );
     }
 
@@ -131,6 +146,6 @@ public class ConsultaServiceImpl implements IConsultaService {
 
         if (!pacienteService.isValid(pacienteId)) throw new InvalidArgumentException("paciente", pacienteId, true);
 
-        if (!servicioMedicoRepository.existsById(servicioMedicoCodigo)) throw new InvalidArgumentException("servicio", servicioMedicoCodigo, true);
+        if (!servicioMedicoRepository.existsByCodigoAndActivoTrue(servicioMedicoCodigo)) throw new InvalidArgumentException("servicio", servicioMedicoCodigo, true);
     }
 }
