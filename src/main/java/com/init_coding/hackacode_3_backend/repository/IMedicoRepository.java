@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface IMedicoRepository extends JpaRepository<MedicoEntity, Long> {
 
-    List<MedicoEntity> findAllByEspecialidadIdAndActivoTrue(Long especialidadId);
+    List<MedicoEntity> findAllByEspecialidad_idAndActivoTrue(Long especialidadId);
 
     List<MedicoEntity> findAllByActivoTrue();
 

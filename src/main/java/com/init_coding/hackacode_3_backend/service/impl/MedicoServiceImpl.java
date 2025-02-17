@@ -49,7 +49,7 @@ public class MedicoServiceImpl implements IMedicoService {
     public List<MedicoResponse> findByEspecialidad(Long especialidadId) throws InvalidEspecialidadException {
         especialidadService.verificarEspecialidades(especialidadId);
 
-        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidadIdAndActivoTrue(especialidadId));
+        return medicoMapper.toResponseList(medicoRepository.findAllByEspecialidad_idAndActivoTrue(especialidadId));
     }
 
     @Override

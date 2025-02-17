@@ -22,17 +22,26 @@ import java.util.List;
 @RequestMapping("/api/medicos")
 @Tag(name = "Médicos", description = "Operaciones realizadas con médicos")
 public class MedicoController {
+
     @Autowired
     IMedicoService medicoService;
 
     @Operation(summary = "Obtiene todos los medicos registrados",
-    description = "Este endpoint permite obtener los detalles de todos los médicos")
+    description = "Este endpoint permite obtener los detalles de todos los médicos, con la posibilidad de filtrar por especialidad")
     @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de médicos")
+            value = {
+                @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de médicos"),
+                @ApiResponse(responseCode = "400", description = "Peticion mal formada o especialidad inválida")
+            }
     )
     @GetMapping
-    public ResponseEntity<List<MedicoResponse>> getAll(){
-        return ResponseEntity.ok(medicoService.findAll());
+    public ResponseEntity<List<MedicoResponse>> getAll(
+            @Parameter(description = "ID de la especialidad")
+            @RequestParam(name = "especialidadId", required = false) Long especialidadId) throws InvalidEspecialidadException{
+        if (especialidadId != null)
+            return ResponseEntity.ok(medicoService.findByEspecialidad(especialidadId));
+        else
+            return ResponseEntity.ok(medicoService.findAll());
     }
 
     @Operation(summary = "Obtiene todos los medicos inactivos",
@@ -43,20 +52,6 @@ public class MedicoController {
     @GetMapping("/inactivos")
     public ResponseEntity<List<MedicoResponse>> getAllInactivos(){
         return ResponseEntity.ok(medicoService.findAllInactivos());
-    }
-
-    @Operation(summary = "Obtiene los medicos que tengan la especialidad indicada",
-    description = "Este endpoint permite obtener los detalles de todos los médicos que tengan la especialidad indicada")
-    @ApiResponses(
-            value = {
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de médicos"),
-            @ApiResponse(responseCode = "400", description = "Peticion mal formada o especialidad inválida")}
-    )
-    @GetMapping("/especialidad/{especialidadId}")
-    public ResponseEntity<List<MedicoResponse>> filterByEspecialidad(
-            @Parameter(description = "ID de la especialidad", required = true)
-            @PathVariable(name = "especialidadId") Long especialidadId) throws InvalidEspecialidadException {
-        return ResponseEntity.ok(medicoService.findByEspecialidad(especialidadId));
     }
 
     @Operation(summary = "Obtiene un médico por su ID",

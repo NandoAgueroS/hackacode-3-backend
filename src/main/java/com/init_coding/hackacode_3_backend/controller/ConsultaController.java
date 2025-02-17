@@ -26,35 +26,26 @@ public class ConsultaController {
     @Autowired
     private IConsultaService consultaService;
 
-    @Operation(summary = "Obtiene las consultas de un paciente",
-            description = "Este endpoint permite obtener los detalles de las consultas de un determinado paciente")
+    @Operation(summary = "Obtiene todas las consultas",
+            description = "Este endpoint permite obtener los detalles de todas las consultas, con la posibilidad de filtrar por paciente o médico")
     @ApiResponses(
             value = {
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas del paciente"),
-            @ApiResponse(responseCode = "400", description = "Petición mal formada o paciente inválido")
+                @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas"),
+                @ApiResponse(responseCode = "400", description = "Petición mal formada o paciente/medico inválido")
             }
     )
-    @GetMapping("/paciente/{pacienteId}")
-    public ResponseEntity<List<ConsultaResponse>> filterByPaciente(
+    @GetMapping
+    public ResponseEntity<List<ConsultaResponse>> getAll(
             @Parameter(description = "ID del paciente")
-            @PathVariable(name = "pacienteId") Long pacienteId) throws InvalidArgumentException{
-
-        return ResponseEntity.ok(consultaService.findAllByPaciente(pacienteId));
-    }
-
-    @Operation(summary = "Obtiene las consultas de un médico",
-            description = "Este endpoint permite obtener los detalles de las consultas de un determinado médico")
-    @ApiResponses(
-            value = {
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas del médico"),
-            @ApiResponse(responseCode = "400", description = "Petición mal formada o médico inválido")
-            }
-    )
-    @GetMapping("/medico/{medicoId}")
-    public ResponseEntity<List<ConsultaResponse>> filterByMedico(
+            @RequestParam(name = "pacienteId", required = false) Long pacienteId,
             @Parameter(description = "ID del médico")
-            @PathVariable(name = "medicoId") Long medicoId) throws InvalidArgumentException{
-        return ResponseEntity.ok(consultaService.findAllByMedico(medicoId));
+            @RequestParam(name = "medicoId", required = false) Long medicoId) throws InvalidArgumentException{
+        if (pacienteId != null && medicoId == null)
+            return ResponseEntity.ok(consultaService.findAllByPaciente(pacienteId));
+        else if (medicoId != null && pacienteId == null)
+            return ResponseEntity.ok(consultaService.findAllByMedico(medicoId));
+        else
+            return ResponseEntity.ok(consultaService.findAll());
     }
 
     @Operation(summary = "Obtiene todas las consultas inactivas",
@@ -65,16 +56,6 @@ public class ConsultaController {
     @GetMapping("/inactivos")
     public ResponseEntity<List<ConsultaResponse>> getAllInactivas(){
         return ResponseEntity.ok(consultaService.findAllInactivas());
-    }
-
-    @Operation(summary = "Obtiene todas las consultas",
-            description = "Este endpoint permite obtener los detalles de todas las consultas")
-    @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas")
-    )
-    @GetMapping
-    public ResponseEntity<List<ConsultaResponse>> getAll(){
-        return ResponseEntity.ok(consultaService.findAll());
     }
 
     @Operation(summary = "Obtiene una consulta por su ID",
