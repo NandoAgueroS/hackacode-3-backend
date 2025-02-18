@@ -2,7 +2,9 @@ package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.dto.response.TurnoDisponibleResponse;
 import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
+import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.service.IMedicoService;
@@ -124,7 +126,7 @@ public class MedicoController {
     description = "Este endpoint permite reactivar un médico eliminado de manera lógica")
     @ApiResponses(
             value = {
-            @ApiResponse(responseCode = "200", description = "Se reactivó el médico"),
+            @ApiResponse(responseCode = "204", description = "Se reactivó el médico"),
             @ApiResponse(responseCode = "404", description = "No se encontró el médico"),
             @ApiResponse(responseCode = "409", description = "Conflicto o el médico ya se encontraba activo")
             }
@@ -136,4 +138,23 @@ public class MedicoController {
             @PathVariable(name = "medicoId") Long medicoId) throws ResourceNotFoundException, EntityAlreadyActivaException {
         medicoService.updateActivo(medicoId, true);
     }
+
+    @Operation(summary = "Obtiene los turnos disponibles de un médico",
+    description = "Este endpoint permite obtener una lista de turnos disponibles de un médico en un determinado mes")
+    @ApiResponses(
+            value = {
+            @ApiResponse(responseCode = "200", description = "Se obtuvieron los turnos"),
+            @ApiResponse(responseCode = "404", description = "No se encontró el médico"),
+            @ApiResponse(responseCode = "400", description = "Petición mal formada o mes inválido")
+            }
+    )
+    @GetMapping("/turnos-disponibles")
+    public ResponseEntity<List<TurnoDisponibleResponse>> getTurnosDisponibles(
+            @Parameter(description = "ID del médico", required = true)
+            @RequestParam(name = "medicoId") Long medicoId,
+            @Parameter(description = "Número del mes", required = true)
+            @RequestParam(name = "mes") int mes) throws InvalidArgumentException, ResourceNotFoundException {
+        return ResponseEntity.ok(medicoService.getTurnosDisponiblesByMedicoIdYMes(medicoId, mes));
+    }
+
 }

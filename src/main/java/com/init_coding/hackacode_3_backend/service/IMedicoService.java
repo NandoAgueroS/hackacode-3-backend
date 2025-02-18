@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.MedicoRequest;
 import com.init_coding.hackacode_3_backend.dto.response.MedicoResponse;
+import com.init_coding.hackacode_3_backend.dto.response.TurnoDisponibleResponse;
 import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
@@ -46,7 +47,7 @@ public interface IMedicoService {
      * Actualiza los datos de un médico existente.
      *
      * @return {@link MedicoResponse} con la información del médico.
-     * @throws ResourceNotFoundException si el medico no existe.
+     * @throws ResourceNotFoundException si el médico no existe.
      * @throws com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException si la especialidad no existe.
      */
     MedicoResponse update(Long medicoId, MedicoRequest medico)throws ResourceNotFoundException, InvalidEspecialidadException;
@@ -56,7 +57,7 @@ public interface IMedicoService {
      *
      * @return {@link MedicoResponse} con la información del médico.
      * @param medicoId ID del médico.
-     * @throws ResourceNotFoundException si el medico no existe.
+     * @throws ResourceNotFoundException si el médico no existe.
      */
     MedicoResponse findById(Long medicoId)throws ResourceNotFoundException;
 
@@ -77,4 +78,14 @@ public interface IMedicoService {
      * @return boolean indicando si el médico existe o no.
      */
     boolean isValid(Long medicoId);
+
+    /**
+     * Obtiene los turnos disponibles de un médico por su ID.
+     * @param medicoId ID del médico
+     * @return Lista de {@link TurnoDisponibleResponse} con la información de los turnos disponibles
+     * @throws InvalidArgumentException si el mes ingresado no es válido.
+     * @throws ResourceNotFoundException si el médico no existe.
+     */
+    List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMes(Long medicoId, int mes) throws InvalidArgumentException, ResourceNotFoundException;
+
 }
