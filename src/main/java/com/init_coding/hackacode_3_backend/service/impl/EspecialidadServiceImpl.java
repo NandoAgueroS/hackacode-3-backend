@@ -58,6 +58,8 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
         EspecialidadEntity especialidadModificada = especialidadMapper.toEntity(especialidad);
         especialidadModificada.setId(especialidadId);
 
+        especialidadRepository.save(especialidadModificada);
+
         return especialidadMapper.toResponse(especialidadModificada);
     }
 
