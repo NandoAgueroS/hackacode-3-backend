@@ -8,6 +8,7 @@ import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.exception.InvalidEspecialidadException;
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 public interface IMedicoService {
@@ -80,12 +81,26 @@ public interface IMedicoService {
     boolean isValid(Long medicoId);
 
     /**
-     * Obtiene los turnos disponibles de un médico por su ID.
+     * Obtiene los turnos disponibles para un mes y año de un médico por su ID.
      * @param medicoId ID del médico
+     * @param mes Mes para el cuál se buscarán turnos disponibles
+     * @param anio Año para el cuál se buscarán turnos disponibles
      * @return Lista de {@link TurnoDisponibleResponse} con la información de los turnos disponibles
      * @throws InvalidArgumentException si el mes ingresado no es válido.
      * @throws ResourceNotFoundException si el médico no existe.
      */
-    List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMes(Long medicoId, int mes) throws InvalidArgumentException, ResourceNotFoundException;
+    List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMesYAnio(Long medicoId, int mes, int anio) throws InvalidArgumentException, ResourceNotFoundException;
+
+    /**
+     * Obtiene los turnos disponibles para un mes, año y día de la semana de un médico por su ID.
+     * @param medicoId ID del médico
+     * @param mes Mes para el cuál se buscarán turnos disponibles
+     * @param anio Año para el cuál se buscarán turnos disponibles
+     * @param diaDeLaSemana Dia de la semana para el cuál se buscarán turnos disponibles
+     * @return Lista de {@link TurnoDisponibleResponse} con la información de los turnos disponibles
+     * @throws InvalidArgumentException si el mes ingresado no es válido.
+     * @throws ResourceNotFoundException si el médico no existe.
+     */
+    List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMesYAnioYDiaDeLaSemana(Long medicoId, int mes, int anio, DayOfWeek diaDeLaSemana) throws InvalidArgumentException, ResourceNotFoundException;
 
 }

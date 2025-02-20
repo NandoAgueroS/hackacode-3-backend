@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 @RestController
@@ -140,12 +141,12 @@ public class MedicoController {
     }
 
     @Operation(summary = "Obtiene los turnos disponibles de un médico",
-    description = "Este endpoint permite obtener una lista de turnos disponibles de un médico en un determinado mes")
+    description = "Este endpoint permite obtener una lista de turnos disponibles de un médico en un determinado mes, año y, opcionalmente, un día de la semana")
     @ApiResponses(
             value = {
             @ApiResponse(responseCode = "200", description = "Se obtuvieron los turnos"),
             @ApiResponse(responseCode = "404", description = "No se encontró el médico"),
-            @ApiResponse(responseCode = "400", description = "Petición mal formada o mes inválido")
+            @ApiResponse(responseCode = "400", description = "Petición mal formada o mes/año/dia inválido")
             }
     )
     @GetMapping("/turnos-disponibles")
@@ -153,8 +154,16 @@ public class MedicoController {
             @Parameter(description = "ID del médico", required = true)
             @RequestParam(name = "medicoId") Long medicoId,
             @Parameter(description = "Número del mes", required = true)
-            @RequestParam(name = "mes") int mes) throws InvalidArgumentException, ResourceNotFoundException {
-        return ResponseEntity.ok(medicoService.getTurnosDisponiblesByMedicoIdYMes(medicoId, mes));
+            @RequestParam(name = "mes") int mes,
+            @Parameter(description = "Año", required = true)
+            @RequestParam(name = "anio") int anio,
+            @Parameter(description = "Año")
+            @RequestParam(name = "diaDeLaSemana", required = false)DayOfWeek diaDeLaSemana) throws InvalidArgumentException, ResourceNotFoundException {
+
+        if(diaDeLaSemana != null)
+            return ResponseEntity.ok(medicoService.getTurnosDisponiblesByMedicoIdYMesYAnioYDiaDeLaSemana(medicoId, mes, anio, diaDeLaSemana));
+        else
+            return ResponseEntity.ok(medicoService.getTurnosDisponiblesByMedicoIdYMesYAnio(medicoId, mes, anio));
     }
 
 }

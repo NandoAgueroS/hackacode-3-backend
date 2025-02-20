@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -122,7 +123,7 @@ public class MedicoServiceImpl implements IMedicoService {
     }
 
     @Override
-    public List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMes(Long medicoId, int mes) throws InvalidArgumentException, ResourceNotFoundException{
+    public List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMesYAnio(Long medicoId, int mes, int anio) throws InvalidArgumentException, ResourceNotFoundException{
         if (mes < 1 || mes >12) throw new InvalidArgumentException("El mes tiene que ser un número entre 1 y 12");
 
         MedicoEntity medico = medicoRepository.findByIdAndActivoTrue(medicoId).orElseThrow(() ->
@@ -130,7 +131,7 @@ public class MedicoServiceImpl implements IMedicoService {
 
         List<DisponibilidadEntity> disponibilidades = medico.getDisponibilidades();
 
-        List<ConsultaEntity> consultas = consultaRepository.findAllByMedico_idAndMesAndActivoTrue(medicoId, mes);
+        List<ConsultaEntity> consultas = consultaRepository.findAllByMedico_idAndMesAndAnioAndActivoTrue(medicoId, mes, anio);
 
         List<LocalDateTime> consultasOcupadas = consultas.stream().map(consulta -> LocalDateTime.of(consulta.getFecha(), consulta.getHora())).toList();
 
@@ -138,33 +139,8 @@ public class MedicoServiceImpl implements IMedicoService {
 
         for (DisponibilidadEntity disponibilidad : disponibilidades){
 
-            LocalDate fecha = LocalDate.of(2025, mes, 1);
-            LocalTime hora = disponibilidad.getHoraInicio();
-
-            while (fecha.isBefore(LocalDate.of(2025, mes, 1).plusMonths(1L).minusDays(1L))){
-
-                if (fecha.getDayOfWeek().equals(disponibilidad.getDiaSemana())){
-
-                    while (hora.isBefore(disponibilidad.getHoraFin())){
-
-                        if (!consultasOcupadas.contains(LocalDateTime.of(fecha, hora))){
-                        turnosDisponibles.add(
-                                TurnoDisponibleResponse.builder()
-                                        .fecha(fecha)
-                                        .duracion(30)
-                                        .medicoId(medicoId)
-                                        .hora(hora)
-                                .build());
-                        }
-                        hora = hora.plusMinutes(30L);
-
-                    }
-
-                }
-                fecha = fecha.plusDays(1);
-                hora = disponibilidad.getHoraInicio();
-
-            }
+            LocalDate fecha = LocalDate.of(anio, mes, 1);
+            this.filtrarTurnosDisponibles(disponibilidad, consultas, fecha, medicoId, turnosDisponibles);
 
         }
 
@@ -176,4 +152,64 @@ public class MedicoServiceImpl implements IMedicoService {
 
         return turnosDisponibles;
     }
+
+    @Override
+    public List<TurnoDisponibleResponse> getTurnosDisponiblesByMedicoIdYMesYAnioYDiaDeLaSemana(Long medicoId, int mes, int anio, DayOfWeek diaDeLaSemana) throws InvalidArgumentException, ResourceNotFoundException{
+        if (mes < 1 || mes >12) throw new InvalidArgumentException("El mes tiene que ser un número entre 1 y 12");
+
+        MedicoEntity medico = medicoRepository.findByIdAndActivoTrue(medicoId).orElseThrow(() ->
+                new ResourceNotFoundException("obtener turnos", "medico", medicoId));
+
+        List<DisponibilidadEntity> disponibilidades = medico.getDisponibilidades();
+
+        List<ConsultaEntity> consultas = consultaRepository.findAllByMedico_idAndMesAndAnioAndActivoTrue(medicoId, mes, anio);
+
+
+        List<TurnoDisponibleResponse> turnosDisponibles = new LinkedList<>();
+
+        for (DisponibilidadEntity disponibilidad : disponibilidades) {
+            LocalDate fecha = LocalDate.of(anio, mes, 1);
+            if (disponibilidad.getDiaSemana().equals(diaDeLaSemana)) {
+                filtrarTurnosDisponibles(disponibilidad, consultas, fecha, medicoId, turnosDisponibles);
+            }
+        }
+            Collections.sort(
+                    turnosDisponibles,
+                    Comparator
+                            .comparing(TurnoDisponibleResponse::getFecha)
+                            .thenComparing(TurnoDisponibleResponse::getHora));
+
+            return turnosDisponibles;
+        }
+        private void filtrarTurnosDisponibles(DisponibilidadEntity disponibilidad, List<ConsultaEntity> consultasOcupadas, LocalDate fecha, Long medicoId, List<TurnoDisponibleResponse> turnosDisponibles){
+            List<LocalDateTime> consultasOcupadasDateTime = consultasOcupadas.stream().map(consulta -> LocalDateTime.of(consulta.getFecha(), consulta.getHora())).toList();
+                LocalTime hora = disponibilidad.getHoraInicio();
+                LocalDate fechaAux = fecha;
+
+                while (fechaAux.isBefore(fecha.plusMonths(1L).minusDays(1L))){
+
+                    if (fechaAux.getDayOfWeek().equals(disponibilidad.getDiaSemana())){
+
+                        while (hora.isBefore(disponibilidad.getHoraFin())){
+
+                            if (!consultasOcupadasDateTime.contains(LocalDateTime.of(fechaAux, hora))){
+                            turnosDisponibles.add(
+                                    TurnoDisponibleResponse.builder()
+                                            .fecha(fechaAux)
+                                            .duracion(30)
+                                            .medicoId(medicoId)
+                                            .hora(hora)
+                                    .build());
+                            }
+                            hora = hora.plusMinutes(30L);
+
+                        }
+
+                    }
+                    fechaAux = fechaAux.plusDays(1);
+                    hora = disponibilidad.getHoraInicio();
+
+                }
+
+        }
 }

@@ -16,8 +16,8 @@ public interface IConsultaRepository extends JpaRepository<ConsultaEntity, Long>
 
     List<ConsultaEntity> findAllByMedico_idAndActivoTrue(Long medicoId);
 
-    @Query("SELECT c FROM ConsultaEntity c WHERE c.medico.id = :medicoId AND MONTH(c.fecha) = :mes AND activo = true")
-    List<ConsultaEntity> findAllByMedico_idAndMesAndActivoTrue(Long medicoId, int mes);
+    @Query("SELECT c FROM ConsultaEntity c WHERE c.medico.id = :medicoId AND MONTH(c.fecha) = :mes AND YEAR(c.fecha) = :anio AND activo = true")
+    List<ConsultaEntity> findAllByMedico_idAndMesAndAnioAndActivoTrue(Long medicoId, int mes, int anio);
 
     List<ConsultaEntity> findAllByPaciente_idAndActivoTrue(Long pacienteId);
 
