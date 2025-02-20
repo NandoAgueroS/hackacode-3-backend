@@ -18,7 +18,11 @@ public interface IPacienteRepository extends JpaRepository<PacienteEntity, Long>
     List<PacienteEntity> findAllByActivoFalse();
 
     Optional<PacienteEntity> findByIdAndActivoTrue(Long id);
+
+    Optional<PacienteEntity> findByDniAndActivoTrue(String dni);
+
     boolean existsByIdAndActivoTrue(Long id);
+
     @Modifying
     @Query("UPDATE PacienteEntity p SET p.activo = :activo WHERE p.id = :id")
     void updateActivoById(@Param("id") Long id, @Param("activo") boolean activo);

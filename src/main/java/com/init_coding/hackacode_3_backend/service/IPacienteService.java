@@ -49,6 +49,15 @@ public interface IPacienteService {
     PacienteResponse findById(Long pacienteId)throws ResourceNotFoundException;
 
     /**
+     * Busca un paciente por su DNI.
+     *
+     * @return {@link PacienteResponse} con la información del paciente.
+     * @param pacienteDni DNI del paciente.
+     * @throws ResourceNotFoundException si el paciente no existe.
+     */
+    PacienteResponse findByDni(String pacienteDni)throws ResourceNotFoundException;
+
+    /**
      * Permite activar o desactivar un paciente por su ID.
      *
      * @param pacienteId ID del paciente.

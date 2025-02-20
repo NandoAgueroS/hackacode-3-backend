@@ -45,7 +45,6 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.findAllInactivos());
     }
 
-
     @Operation(summary = "Obtiene un paciente por su ID",
             description = "Este endpoint permite obtener los detalles un paciente")
     @ApiResponses(
@@ -55,10 +54,25 @@ public class PacienteController {
             }
     )
     @GetMapping("/{pacienteId}")
-    public ResponseEntity<PacienteResponse> findOne(
+    public ResponseEntity<PacienteResponse> findOneById(
             @Parameter(description = "ID del paciente", required = true)
             @PathVariable(name = "pacienteId") Long pacienteId) throws ResourceNotFoundException {
         return ResponseEntity.ok(pacienteService.findById(pacienteId));
+    }
+
+    @Operation(summary = "Obtiene un paciente por su DNI",
+            description = "Este endpoint permite obtener los detalles un paciente")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Se obtuvo el paciente"),
+                    @ApiResponse(responseCode = "404", description = "No se encontró el paciente")
+            }
+    )
+    @GetMapping("/dni/{pacienteDni}")
+    public ResponseEntity<PacienteResponse> findOneByDni(
+            @Parameter(description = "DNI del paciente", required = true)
+            @PathVariable(name = "pacienteDni") String pacienteDni) throws ResourceNotFoundException {
+        return ResponseEntity.ok(pacienteService.findByDni(pacienteDni));
     }
 
     @Operation(summary = "Crea un nuevo paciente",

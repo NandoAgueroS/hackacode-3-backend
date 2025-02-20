@@ -66,6 +66,16 @@ public class PacienteServiceImpl implements IPacienteService {
                         .orElseThrow(()->
                                 new ResourceNotFoundException("buscar", "Paciente", pacienteId)));
     }
+
+    @Override
+    public PacienteResponse findByDni(String pacienteDni) throws ResourceNotFoundException {
+        return pacienteMapper.toResponse(
+                pacienteRepository
+                        .findByDniAndActivoTrue(pacienteDni)
+                        .orElseThrow(()->
+                                new ResourceNotFoundException("buscar", "Paciente", pacienteDni)));
+    }
+
     @Transactional
     @Override
     public void updateActivo(Long pacienteId, boolean esActivo) throws ResourceNotFoundException, EntityAlreadyActivaException {

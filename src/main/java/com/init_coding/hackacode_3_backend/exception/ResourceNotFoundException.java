@@ -10,4 +10,8 @@ public class ResourceNotFoundException extends Exception{
         super(String.format("Fallo al %s: No se encontró la entidad %s con ID %d", accion, entity, entityId));
     }
 
+    public ResourceNotFoundException(String accion, String entity, String dni) {
+        super(String.format("Fallo al %s: No se encontró la entidad %s con DNI %s", accion, entity, dni));
+    }
+
 }
