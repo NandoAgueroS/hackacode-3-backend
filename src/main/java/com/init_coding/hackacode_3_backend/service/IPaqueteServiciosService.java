@@ -20,6 +20,15 @@ public interface IPaqueteServiciosService {
     List<PaqueteServiciosResponse> findAll();
 
     /**
+     * Obtiene todos los paquetes de servicios registrados que contengan un determinado servicio individual.
+     *
+     * @param servicioIndividualId ID del servicio individual.
+     * @return Lista de {@link PaqueteServiciosResponse} con la información de los paquetes de servicios.
+     * @throws InvalidServicioException si el servicio individual no es válido.
+     */
+    List<PaqueteServiciosResponse> findByServicioIndividual(Long servicioIndividualId) throws InvalidServicioException;
+
+    /**
      * Obtiene todos los paquetes de servicios inactivos.
      *
      * @return Lista de {@link PaqueteServiciosResponse} con la información de los paquetes de servicios.

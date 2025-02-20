@@ -13,6 +13,8 @@ public interface IPaqueteServiciosRepository extends JpaRepository<PaqueteServic
 
     List<PaqueteServiciosEntity> findAllByActivoTrue();
 
+    List<PaqueteServiciosEntity> findAllByServicios_CodigoAndActivoTrue(Long servicioIndividualId);
+
     List<PaqueteServiciosEntity> findAllByActivoFalse();
 
     Optional<PaqueteServiciosEntity> findByCodigoAndActivoTrue(Long codigo);

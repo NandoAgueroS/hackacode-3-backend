@@ -137,11 +137,19 @@ public class ServicioMedicoController {
     @Operation(summary = "Obtiene todos los paquetes de servicios registrados",
             description = "Este endpoint permite obtener los detalles de todos los paquetes de servicios")
     @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de paquetes de servicios")
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de paquetes de servicios"),
+                    @ApiResponse(responseCode = "400", description = "Peticion mal formada o servicio individual inválido")
+            }
     )
     @GetMapping("/paquetes")
-    public ResponseEntity<List<PaqueteServiciosResponse>> getAllPaquetesServicios(){
-        return ResponseEntity.ok(paqueteServiciosService.findAll());
+    public ResponseEntity<List<PaqueteServiciosResponse>> getAllPaquetesServicios(
+            @Parameter(description = "ID del Servicio Individual para filtrar por paquetes que lo contengan")
+            @RequestParam(name = "servicioIndividualId", required = false) Long servicioIndividualId) throws InvalidServicioException {
+        if (servicioIndividualId != null)
+            return ResponseEntity.ok(paqueteServiciosService.findByServicioIndividual(servicioIndividualId));
+        else
+            return ResponseEntity.ok(paqueteServiciosService.findAll());
     }
 
     @Operation(summary = "Obtiene todos los paquetes de servicios inactivos",

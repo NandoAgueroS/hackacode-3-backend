@@ -37,6 +37,15 @@ public class PaqueteServiciosServiceImpl implements IPaqueteServiciosService {
     }
 
     @Override
+    public List<PaqueteServiciosResponse> findByServicioIndividual(Long servicioIndividualId) throws InvalidServicioException {
+        servicioIndividualService.verificarServicioIndividual(servicioIndividualId);
+
+        return paqueteServiciosMapper.toResponseList(
+                paqueteServiciosRepository.findAllByServicios_CodigoAndActivoTrue(servicioIndividualId)
+        );
+    }
+
+    @Override
     public List<PaqueteServiciosResponse> findAllInactivos() {
         return paqueteServiciosMapper.toResponseList(
                 paqueteServiciosRepository.findAllByActivoFalse()
