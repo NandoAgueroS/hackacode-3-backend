@@ -1,8 +1,11 @@
 HELP.md
-target/
+target/*
+!target/hackacode-3-backend-0.0.1-SNAPSHOT.jar
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+.env
 
 ### STS ###
 .apt_generated
