@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -48,7 +47,6 @@ public class SecurityConfig {
                     http.requestMatchers("/api/servicios/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");
                     http.anyRequest().denyAll();
                 })
-                .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();
     }
