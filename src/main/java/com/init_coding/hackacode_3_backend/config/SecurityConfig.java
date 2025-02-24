@@ -45,6 +45,7 @@ public class SecurityConfig {
                     http.requestMatchers("/api/especialidades/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");
                     http.requestMatchers("/api/consultas/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");
                     http.requestMatchers("/api/servicios/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");
+                    http.requestMatchers("/api/pagos/**").hasRole("DIRECTOR");
                     http.anyRequest().denyAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)

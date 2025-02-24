@@ -37,7 +37,7 @@ public class ConsultaEntity {
 
     private String estado;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "codigo_pago", referencedColumnName = "codigo")
     private PagoEntity pago;
 

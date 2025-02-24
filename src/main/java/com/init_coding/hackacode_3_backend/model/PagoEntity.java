@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -20,10 +21,18 @@ public class PagoEntity {
 
     private String metodo;
 
-    private String estado;
+    private boolean esPagado;
 
+    private boolean activo;
+
+    private BigDecimal total;
+
+    @OneToOne(mappedBy = "pago")
+    private ConsultaEntity consulta;
+
+/*
     private int cantidadPagos;
-    @OneToMany(mappedBy = "pago")
-    private List<DetallePagoEntity> detallePagos;
+    @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL)
+    private List<DetallePagoEntity> detallePagos;*/
 
 }

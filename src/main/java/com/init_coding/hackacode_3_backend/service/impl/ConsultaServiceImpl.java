@@ -7,8 +7,11 @@ import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
 import com.init_coding.hackacode_3_backend.mapper.ConsultaMapper;
 import com.init_coding.hackacode_3_backend.model.ConsultaEntity;
+import com.init_coding.hackacode_3_backend.model.PacienteEntity;
+import com.init_coding.hackacode_3_backend.model.PagoEntity;
 import com.init_coding.hackacode_3_backend.model.ServicioMedico;
 import com.init_coding.hackacode_3_backend.repository.IConsultaRepository;
+import com.init_coding.hackacode_3_backend.repository.IPacienteRepository;
 import com.init_coding.hackacode_3_backend.repository.IServicioMedicoRepository;
 import com.init_coding.hackacode_3_backend.service.IConsultaService;
 import com.init_coding.hackacode_3_backend.service.IMedicoService;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -34,6 +38,9 @@ public class ConsultaServiceImpl implements IConsultaService {
 
     @Autowired
     private IPacienteService pacienteService;
+
+    @Autowired
+    private IPacienteRepository pacienteRepository;
 
     @Autowired
     private IServicioMedicoRepository servicioMedicoRepository;
@@ -60,13 +67,27 @@ public class ConsultaServiceImpl implements IConsultaService {
         verificarArgumentos(consulta);
         ServicioMedico servicioMedico = servicioMedicoRepository.findById(consulta.getServicioMedicoCodigo()).orElse(null);
 
+        PacienteEntity pacienteEntity = pacienteRepository.findByIdAndActivoTrue(consulta.getPacienteId()).orElse(null);
+
+        PagoEntity pagoEntity = new PagoEntity();
+        BigDecimal total = servicioMedico.getPrecio();
+        if (pacienteEntity.isTieneObraSocial()){
+
+            BigDecimal descuento = new BigDecimal("0.20");
+
+            pagoEntity.setTotal(total.subtract(total.multiply(descuento)));
+        }else{
+            pagoEntity.setTotal(total);
+        }
+
+        pagoEntity.setEsPagado(consulta.isEsPagado());
+        pagoEntity.setMetodo(consulta.getMetodoPago());
+
         ConsultaEntity consultaEntity = consultaMapper.toEntity(consulta);
         consultaEntity.setServicioMedico(servicioMedico);
+        consultaEntity.setPago(pagoEntity);
+
         consultaRepository.save(consultaEntity);
-
-        //consultaRepository.flush();
-
-        //entityManager.refresh(consultaEntity);
 
         return consultaMapper.toResponse(
                 consultaEntity
@@ -84,7 +105,24 @@ public class ConsultaServiceImpl implements IConsultaService {
         consultaModificadaEntity.setCodigo(consultaCodigo);
 
         ServicioMedico servicioMedico = servicioMedicoRepository.findById(consulta.getServicioMedicoCodigo()).orElse(null);
+
+        PacienteEntity pacienteEntity = pacienteRepository.findByIdAndActivoTrue(consulta.getPacienteId()).orElse(null);
+
+        PagoEntity pagoEntity = new PagoEntity();
+        BigDecimal total = servicioMedico.getPrecio();
+        if (pacienteEntity.isTieneObraSocial()){
+
+            BigDecimal descuento = new BigDecimal("0.20");
+
+            pagoEntity.setTotal(total.subtract(total.multiply(descuento)));
+        }else{
+            pagoEntity.setTotal(total);
+        }
+
+        pagoEntity.setEsPagado(consulta.isEsPagado());
+        pagoEntity.setMetodo(consulta.getMetodoPago());
         consultaModificadaEntity.setServicioMedico(servicioMedico);
+        consultaModificadaEntity.setPago(pagoEntity);
 
         consultaRepository.save(consultaModificadaEntity);
 
