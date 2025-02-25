@@ -28,4 +28,6 @@ public class ConsultaResponse {
 
     private boolean activo;
 
+    private PagoResponse pago;
+
 }

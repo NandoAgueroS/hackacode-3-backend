@@ -2,7 +2,9 @@ package com.init_coding.hackacode_3_backend.mapper;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.dto.response.PagoResponse;
 import com.init_coding.hackacode_3_backend.model.ConsultaEntity;
+import com.init_coding.hackacode_3_backend.model.PagoEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -31,6 +33,8 @@ public interface ConsultaMapper {
     List<ConsultaResponse> toResponseList(List<ConsultaEntity> consultas);
 
     List<ConsultaEntity> toEntityList(List<ConsultaRequest> consultas);
+
+    PagoResponse pagoEntityToPagoResponse(PagoEntity pagoEntity);
 
 
 }
