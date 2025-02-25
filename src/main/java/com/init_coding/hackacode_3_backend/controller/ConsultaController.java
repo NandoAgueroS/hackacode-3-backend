@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.controller;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.dto.response.ConsultasMesResponse;
 import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
@@ -47,6 +48,24 @@ public class ConsultaController {
         else
             return ResponseEntity.ok(consultaService.findAll());
     }
+
+    @Operation(summary = "Obtiene las consultas de un mes y año, y su cantidad",
+            description = "Este endpoint permite obtener las consultas y su cantidad en un determinado mes y año")
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "Se obtuvo la lista de consultas"),
+                @ApiResponse(responseCode = "400", description = "Petición mal formada o mes inválido")
+            }
+    )
+
+    @GetMapping("/cantidad")
+    public ResponseEntity<ConsultasMesResponse> getCantidadYConsultas(
+            @Parameter(description = "Año de las consultas", required = true) @RequestParam(name = "anio") Integer anio,
+            @Parameter(description = "Mes de las consultas", required = true) @RequestParam(name = "mes") Integer mes) throws InvalidArgumentException{
+
+        return ResponseEntity.ok(consultaService.findAllByMesAndAnio(mes, anio));
+    }
+
 
     @Operation(summary = "Obtiene todas las consultas inactivas",
             description = "Este endpoint permite obtener los detalles de todas las consultas inactivas")

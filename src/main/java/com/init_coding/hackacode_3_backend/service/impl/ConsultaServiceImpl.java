@@ -1,6 +1,7 @@
 package com.init_coding.hackacode_3_backend.service.impl;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
+import com.init_coding.hackacode_3_backend.dto.response.ConsultasMesResponse;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
 import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
@@ -53,6 +54,15 @@ public class ConsultaServiceImpl implements IConsultaService {
         return consultaMapper.toResponseList(
                 consultaRepository.findAllByActivoTrue()
         );
+    }
+
+    @Override
+    public ConsultasMesResponse findAllByMesAndAnio(int mes, int anio) throws InvalidArgumentException {
+        if (mes <= 0 || mes > 12) throw new InvalidArgumentException("El mes tiene que ser un número entre 1 y 12");
+        List<ConsultaResponse> consultas = consultaMapper.toResponseList(
+                consultaRepository.findAllByMesAndAnioAndActivoTrue(mes, anio)
+        );
+        return new ConsultasMesResponse(consultas.size(), consultas);
     }
 
     @Override

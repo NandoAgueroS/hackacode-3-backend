@@ -21,4 +21,7 @@ public interface IPagoRepository extends JpaRepository<PagoEntity, Long> {
     @Query("SELECT COALESCE(SUM(p.total),0) FROM PagoEntity p WHERE p.consulta.fecha = :fecha")
     BigDecimal getGananciasByFecha(@Param("fecha")LocalDate fecha);
 
+    @Query("SELECT COALESCE(SUM(p.total),0) FROM PagoEntity p")
+    BigDecimal getGananciasTotales();
+
 }

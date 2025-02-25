@@ -2,6 +2,7 @@ package com.init_coding.hackacode_3_backend.service;
 
 import com.init_coding.hackacode_3_backend.dto.request.ConsultaRequest;
 import com.init_coding.hackacode_3_backend.dto.response.ConsultaResponse;
+import com.init_coding.hackacode_3_backend.dto.response.ConsultasMesResponse;
 import com.init_coding.hackacode_3_backend.exception.EntityAlreadyActivaException;
 import com.init_coding.hackacode_3_backend.exception.InvalidArgumentException;
 import com.init_coding.hackacode_3_backend.exception.ResourceNotFoundException;
@@ -15,6 +16,16 @@ public interface IConsultaService {
      * @return Lista de {@link ConsultaResponse} con la información de las consultas.
      */
     List<ConsultaResponse> findAll();
+
+    /**
+     * Obtiene todas las consultas registradas en un determinado mes y año.
+     *
+     * @return {@link ConsultasMesResponse} con la información de las consultas.
+     * @param mes Número del mes por el que se va a buscar.
+     * @param anio Número del año por el que se va a buscar.
+     * @throws InvalidArgumentException si el mes no es válido.
+     */
+     ConsultasMesResponse findAllByMesAndAnio(int mes, int anio) throws InvalidArgumentException;
 
     /**
      * Obtiene todas las consultas activas.
