@@ -38,7 +38,8 @@ public class SecurityConfig {
                     http.requestMatchers("/swagger-ui/**").permitAll();
                     http.requestMatchers("/v3/api-docs/**").permitAll();
                     http.requestMatchers("/swagger-ui.html").permitAll();
-                    http.requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/api/auth/verificar-token").authenticated();
+                    http.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
                     //http.requestMatchers(HttpMethod.POST,"/api/auth/sign-up").hasAnyRole("ADMIN", "DIRECTOR");
                     http.requestMatchers("/api/medicos/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");
                     http.requestMatchers("/api/pacientes/**").hasAnyRole("ADMIN", "DIRECTOR", "RECEPCIONISTA");

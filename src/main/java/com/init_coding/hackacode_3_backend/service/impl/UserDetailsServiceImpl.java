@@ -125,4 +125,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return new AuthResponse(createdUser.getUsername(), "El usuario se registró con éxito", accessToken, true);
     }
+
+    //public boolean verificarToken(String token){}
 }
